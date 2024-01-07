@@ -1,0 +1,23 @@
+{
+  "name": "pipedown",
+  "version": "1.0.0",
+  "description": "3D puzzle game",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "3D",
+    "puzzle",
+    "game"
+  ],
+  "author": "Nik Lever",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.10"
+  }
+}
