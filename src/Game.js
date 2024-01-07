@@ -515,7 +515,7 @@ export class Game{
 			this.ui.showMessage(data.message);
 		}
 		
-		this.sfx.play('gliss');
+		this.sfx.play('gliss'); 
     }
 
     reset(){
