@@ -39,9 +39,11 @@ export class Game{
         this._hints = 20;
 
         if ( localStorage ){
-            //localStorage.setItem("score", 0);
-            //localStorage.setItem("levelIndex", 0);
-            //localStorage.setItem("hints", 20);
+            if (false){
+                localStorage.setItem("score", 0);
+                localStorage.setItem("levelIndex", 0);
+                localStorage.setItem("hints", 20);
+            }
 
             const score = Number(localStorage.getItem( "score" ));
             const levelIndex = Number(localStorage.getItem("levelIndex"));
@@ -546,6 +548,9 @@ export class Game{
 		}
 		this.interactive = false;
 		this.sfx.play("swish");
+
+        this.hintTime = Date.now();
+
 		setTimeout(()=>{ this.endHint();}, 5000);
 	}
 	
@@ -558,6 +563,9 @@ export class Game{
 		}
 		this.sfx.play("swish");
 		this.interactive = true;
+        delete this.hintTime;
+        const btn = document.getElementById('hint');
+		btn.childNodes[0].nodeValue = `HINT (${this._hints})`;
 		if (this.selected!=undefined) this.arrows.visible = true;
 	}
 
@@ -627,6 +635,7 @@ export class Game{
                         switch(child.name){
                             case 'Arrow':
                                 this.bits.arrow = child;
+                                child.scale.set( 0.16, 0.16, 0.12);
                                 break;
                             case 'Ball':
                                 const geometry = new SphereGeometry(0.25, 12, 8);
@@ -844,6 +853,11 @@ export class Game{
                     }
                 }
             }
+        }
+        if (this.hintTime){
+            const t = (5000 - (Date.now() - this.hintTime))/1000;
+            const btn = document.getElementById('hint');
+		    btn.childNodes[0].nodeValue = `HINT (${t.toFixed(1)})`;
         }
         if (this.tween) this.tween.update(dt);
         this.renderer.render( this.scene, this.camera );  

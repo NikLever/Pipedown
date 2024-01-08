@@ -33,6 +33,21 @@ export class UI{
 		
 		const btn2 = document.getElementById("reset");
 		btn2.onclick = () => { this.game.reset(); }
+
+		const btn3 = document.getElementById("message_close");
+		btn3.onclick = () => { 
+			const panel = document.getElementById('message');
+			panel.style.display = 'none';
+			btn3.style.display = "none";
+		 }
+
+		const btn4 = document.getElementById("drop");
+		btn4.onclick = () => { this.game.dropBall(); }
+
+		if (this.game.levelIndex>0){
+			const btn = document.getElementById("message_close");
+			btn.style.display = "none";
+		}
     }
 
     startMessages(){
@@ -41,6 +56,8 @@ export class UI{
 			this.showMessage(this.messages.text[this.messages.index], 25, this.startMessages);
 		}else{
 			this.showMessage(this.messages.text[this.messages.index], 25);
+			const btn = document.getElementById("message_close");
+			btn.style.display = "none";
 		}
 		this.messages.index++;
 	}
