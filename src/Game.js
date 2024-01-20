@@ -1,6 +1,6 @@
 import {
     Clock, Raycaster, Vector3, Scene, Color, PerspectiveCamera, HemisphereLight, DirectionalLight,
-    WebGLRenderer, Vector2, Group, Mesh, SphereGeometry, PMREMGenerator, CubeTextureLoader
+    WebGLRenderer, Vector2, Group, Mesh, SphereGeometry, PMREMGenerator, CubeTextureLoader, MeshBasicMaterial
 } from "three"
 import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
@@ -61,6 +61,8 @@ export class Game{
 
 
         }
+
+       // this.levelIndex = 11;
 
         //this._hints = this.hints;
 
@@ -165,7 +167,7 @@ export class Game{
                 this.moveCount++;
                 this.ui.moves = `${this.moveCount}(${this.minMove})`;
 
-				this.tween = new Tween(this.selected.position, arrow.move.axis, endValue, 1, () => { 
+				this.tween = new Tween(this.selected.position, arrow.move.axis, endValue, 0.5, () => { 
 					this.interactive = true; 
 					delete this.tween;
 					this.selectPipe(this.selected);
@@ -202,6 +204,7 @@ export class Game{
 	}
 
     dropBall(){
+        this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
         delete this.selected;
         this.arrows.visible = false;
         this.stepPhysics = true;
@@ -233,7 +236,7 @@ export class Game{
     checkPipes(){
         let result = true;
         this.level.children.forEach( pipe => {
-            if (!pipe.userData.ballPassed){
+            if (!pipe.userData.ballPassed && !pipe.userData.isBlocker){
                 result = false;
                 return;
             }
@@ -269,7 +272,11 @@ export class Game{
 	
 	selectPipe(object){
 		if (object.userData!=undefined && object.userData.cellId==16) return false;
+        if (this.selected){
+            this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
+        }
 		this.selected = object;
+        this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.highlighted;
         console.log(`Game.selectPipe ${object.userData.cellId}`);
         object.getWorldPosition( this.tmpVec3 );
         //console.log(this.tmpVec3);
@@ -498,7 +505,7 @@ export class Game{
 		
 		const mid = (data.size==3) ? cellSize : 1.66 * cellSize;
 		this.controls.target.set(mid,-mid,-mid);//mid, -mid+cellSize/2, -mid);
-		this.camera.position.set(0, 0, (data.size==3) ? 5.5 : 7);
+		this.camera.position.set(0, 0, (data.size==3) ? 7 : 9);
 		this.controls.update();
         this.bits.box.position.set(-cellSize/2,cellSize/2,cellSize/2);
 		
@@ -523,7 +530,7 @@ export class Game{
     reset(){
 		this.level.children.forEach( pipe => { pipe.position.copy(pipe.userData.startPosition); });
 		this.sfx.play("swish");
-        this.ui.moves = `0(${data.minMove})`;
+        this.ui.moves = `0(${this.minMove})`;
         this.moveCount = 0;
 		delete this.selected;
 		this.arrows.visible = false;
@@ -635,7 +642,7 @@ export class Game{
                         switch(child.name){
                             case 'Arrow':
                                 this.bits.arrow = child;
-                                child.scale.set( 0.16, 0.16, 0.12);
+                                child.scale.set( 0.14, 0.14, 0.12);
                                 break;
                             case 'Ball':
                                 const geometry = new SphereGeometry(0.25, 12, 8);
@@ -648,6 +655,7 @@ export class Game{
                                 break;
                             case 'BoxChrome':
                                 this.bits.blocker = child;
+                                child.userData.isBlocker = true;
                                 break;
                             case 'BoxOutline':
                                 this.bits.box = child;
@@ -670,9 +678,13 @@ export class Game{
 							    this.glassMaterial = {};
 							    this.glassMaterial.normal = mat;
 							    this.glassMaterial.highlighted = mat.clone();
+                                this.frameMaterial = {};
+                                this.frameMaterial.normal = child.children[0].material;
+                                this.frameMaterial.highlighted = new MeshBasicMaterial();
 							    const col = this.glassMaterial.highlighted.color;
 							    [col.g, col.b] = [col.b, col.g];
 							    child.userData.glassIndex = 1;
+                                child.userData.frameIndex = 0;
                                 child.position.set(0, 0, 0);
                                 child.quaternion.identity();
                                 break;
@@ -682,6 +694,7 @@ export class Game{
                                 child.children[0].material.opacity = 0.3;
                                 child.children[0].material.roughness = 0;
                                 child.userData.glassIndex = 0;
+                                child.userData.frameIndex = 1;
                                 child.position.set(0, 0, 0);
                                 child.quaternion.identity();
                                 break;
@@ -734,47 +747,48 @@ export class Game{
         let arrow;
 
         const offset = 1.6;
+        const offsetP = 1.1;
         const halfPI = Math.PI/2;
         this.arrows = new Group();
         //Left
         arrow = this.bits.arrow.clone();
         arrow.name = "Left";
         arrow.move = { axis:'x', offset:-offset };
-        arrow.position.set(-offset, 0, 0);
+        arrow.position.set(-offsetP, 0, 0);
         arrow.rotateY(halfPI);
         this.arrows.add(arrow);
         //Right
         arrow = this.bits.arrow.clone();
         arrow.name = "Right";
         arrow.move = { axis:'x', offset };
-        arrow.position.set(offset, 0, 0);
+        arrow.position.set(offsetP, 0, 0);
         arrow.rotateY(-halfPI);
         this.arrows.add(arrow);
         //Up
         arrow = this.bits.arrow.clone();
         arrow.name = "Up";
         arrow.move = { axis:'y', offset };
-        arrow.position.set(0, offset, 0);
+        arrow.position.set(0, offsetP, 0);
         this.arrows.add(arrow);
         //Down
         arrow = this.bits.arrow.clone();
         arrow.name = "Down";
         arrow.move = { axis:'y', offset:-offset };
-        arrow.position.set(0, -offset, 0);
+        arrow.position.set(0, -offsetP, 0);
         arrow.rotateX(halfPI*2);
         this.arrows.add(arrow);
         //Foward
         arrow = this.bits.arrow.clone();
         arrow.name = "Forward";
         arrow.move = { axis:'z', offset };
-        arrow.position.set(0, 0, offset);
+        arrow.position.set(0, 0, offsetP);
         arrow.rotateX(halfPI);
         this.arrows.add(arrow);
         //Back
         arrow = this.bits.arrow.clone();
         arrow.name = "Back";
         arrow.move = { axis:'z', offset:-offset };
-        arrow.position.set(0, 0, -offset);
+        arrow.position.set(0, 0, -offsetP);
         arrow.rotateX(-halfPI);
         this.arrows.add(arrow);
         

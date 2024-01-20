@@ -165,7 +165,7 @@ export class Physics{
 
 	step() {
         const dt = this.clock.getDelta();
-		this.world.timestep = (dt>this.fixedstep*2) ? this.fixedstep : dt; 
+		this.world.timestep = (dt>this.fixedstep) ? this.fixedstep : dt; 
 		this.world.step();
 
 		this.meshes.forEach( mesh => {
