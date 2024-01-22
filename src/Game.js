@@ -532,7 +532,10 @@ export class Game{
 		this.sfx.play("swish");
         this.ui.moves = `0(${this.minMove})`;
         this.moveCount = 0;
-		delete this.selected;
+        if (this.selected){
+            this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
+		    delete this.selected;
+        }
 		this.arrows.visible = false;
 	}
 
