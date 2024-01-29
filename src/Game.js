@@ -46,7 +46,7 @@ export class Game{
             if (false){
                 localStorage.setItem("score", 0);
                 localStorage.setItem("levelIndex", 0);
-                localStorage.setItem("hints", 20);
+                localStorage.setItem("hints", 0);
             }
 
             const score = Number(localStorage.getItem( "score" ));
@@ -56,19 +56,13 @@ export class Game{
             if (score != null) this.score = score;
             if (levelIndex != null) this.levelIndex = levelIndex;
             if (hints != null){
-                if (hints < 20){
-                    this.hints = 20; 
-                    hints = 20;
-                }
                 this._hints = hints;
             }
-
-
         }
 
         this.loadSounds();
 
-        //this.cg = new CGHandler(this);
+        this.cg = new CGHandler(this);
 
     }
 
@@ -92,7 +86,11 @@ export class Game{
 
     addHints( value ){
         this.hints += value;
-        this.showMessage("You've been rewarded 5 extra hints");
+        this.ui.showMessage("You've been rewarded 5 extra hints");
+    }
+
+    buyHints(){
+		if (this.cg) this.cg.requestAd("rewarded");
     }
 
     set hints(value){
@@ -103,7 +101,7 @@ export class Game{
 	}
 	
 	get hints(){
-        let num = 10;
+        let num = 0;
         if (localStorage) num = Number(localStorage.getItem('hints'));
         this._hints = num;
 		return this._hints;
@@ -213,7 +211,7 @@ export class Game{
 	}
 
     dropBall(){
-        this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
+        if (this.selected) this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
         delete this.selected;
         this.arrows.visible = false;
         this.stepPhysics = true;
@@ -264,13 +262,13 @@ export class Game{
     }
 
     nextLevel(){
+        if (this.nextLevelCalled) return;
         this.stepPhysics = false;
         this.sfx.play("win");
         this.ui.showMessage("Great work!", 40, this.initLevel, this);
-        if (this.cg){
-            this.cg.requestAd();
-            this.cg.requestBanner();
-        }
+        if (this.cg) this.cg.requestAd();
+        this.hints++;
+        this.nextLevelCalled = true;
        // this.initLevel();
     }
 
@@ -540,6 +538,8 @@ export class Game{
 		}
 		
 		this.sfx.play('gliss'); 
+
+        this.nextLevelCalled = false;
     }
 
     reset(){
@@ -556,7 +556,7 @@ export class Game{
 
     showHint(){
 		if (this.hints<=0){
-			this.ui.showMessage("You are out of hints. You get one new hint per level. Or buy 20 hints for just $1.99", 20, this.ui.buyHints );
+			this.ui.showMessage("You are out of hints. You get one new hint per level. Or get 5 hints by viewing a rewarded ad.<br>Press x to cancel.", 20, this.buyHints, this, true );
 			this.sfx.play("boing");
 			return;
 		}

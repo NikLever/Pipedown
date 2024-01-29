@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans|Kavivanar" rel="stylesheet">
   <title>Pipedown</title>
   <style>
-    body{ padding: 0; margin: 0; }
+    body{ padding: 0; margin: 0; overflow: hidden; }
     canvas{ position: fixed; top: 0; left: 0; }
 	#info { color: #fff; position: absolute; top: 10px; width: 100%; text-align: center; z-index: 100; display:block; }
 	#info a { color: #046; font-weight: bold; }
@@ -26,6 +26,7 @@
 	#message_ok{ position: absolute; bottom: 10px; padding: 10px 20px 10px 20px; font-family: sans-serif; font-size: 20px;
 		background-color: #3D455C; color: #fff; border-radius: 8px; border: medium solid #696882; }
 	#message_close{ border: none; margin-left: auto; background-color: transparent; font-size: 30px; }
+	#message_progress{ font-size: 15px; }
 	#hint{ position: absolute; bottom: 10px; right: 10px; padding: 10px 20px 10px 20px; font-family: sans-serif; font-size: 20px;
 		background-color: #3D455C; width: 140px; color: #fff; border-radius: 8px; border: medium solid #696882; z-index: 99; }
 	#drop{ position: absolute; bottom: 70px; right: 10px; padding: 10px 20px 10px 20px; font-family: sans-serif; font-size: 20px;
@@ -42,6 +43,7 @@
 	a:hover { text-decoration: none; color: black; } 
 	a:active { text-decoration: none; }
 	#banner-container { width: 100%; height: 50px; background-color: #3D455C; }
+	.filter-grey { filter: invert(30%) sepia(0%) saturate(3082%) hue-rotate(344deg) brightness(100%) contrast(86%); }
   </style>
 
   <script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>
@@ -53,14 +55,15 @@
       }
     }
   </script>
-  <script type="module" crossorigin src="./assets/index-LAVyFekz.js"></script>
+  <script type="module" crossorigin src="./assets/index-KNiGnA4x.js"></script>
 </head>
 <body>
- 	<div id="banner-container"></div>
+ 	<!--<div id="banner-container"></div>-->
 	<div id="logo"><img src="logo.png" /></div>
 	<!--<div id="courses"><a href="https://niklever.com/courses">CLICK TO LEARN TO CREATE GAMES</a></div>-->
 	<div id="message">
-		<button id="message_close">x</button>
+		<div id="message_progress">1 of 16</div>
+		<button id="message_close"><img src="close.svg" width="48" height="48" /></button>
 		<p id="message_text"></p>
 		<!--<div id="paypal-button-container" style="display: none;"></div>-->
 		<button id="message_ok">OK</button>

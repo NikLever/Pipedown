@@ -2,7 +2,8 @@ export class UI{
     constructor(game){
         this.messages = { 
 			text:[ 
-			"Welcome to Pipedown. The game has 50 levels",
+			"Welcome to Pipedown. The game has 50 levels.",
+			"Press x to skip the instructions.",
 			"The aim is to slide the pipes so they all join.",
 			"The top pipe should be just below the ball",
 			"The bottom pipe just above the crate",
@@ -39,6 +40,8 @@ export class UI{
 			const panel = document.getElementById('message');
 			panel.style.display = 'none';
 			btn3.style.display = "none";
+			const progress = document.getElementById("message_progress");
+			progress.style.display = "none";
 		 }
 
 		const btn4 = document.getElementById("drop");
@@ -47,17 +50,22 @@ export class UI{
 		if (this.game.levelIndex>0){
 			const btn = document.getElementById("message_close");
 			btn.style.display = "none";
+			const progress = document.getElementById("message_progress");
+			progress.style.display = "none";
 		}
     }
 
     startMessages(){
 		this.game.sfx.play("click");
+		const progress = document.getElementById("message_progress");
 		if (this.messages.index<(this.messages.text.length-1)){
+			progress.innerHTML = `${this.messages.index+1} of ${this.messages.text.length}`;
 			this.showMessage(this.messages.text[this.messages.index], 25, this.startMessages);
 		}else{
 			this.showMessage(this.messages.text[this.messages.index], 25);
 			const btn = document.getElementById("message_close");
 			btn.style.display = "none";
+			progress.style.display = "none";
 		}
 		this.messages.index++;
 	}
@@ -77,17 +85,26 @@ export class UI{
 		txt.innerHTML = value;
     }
 
-    showMessage(msg, fontSize=20, onOK=null, binder=null){
+    showMessage(msg, fontSize=20, onOK=null, binder=null, close=false){
 		const txt = document.getElementById('message_text');
 		txt.innerHTML = msg;
 		txt.style.fontSize = fontSize + 'px';
 		const btn = document.getElementById('message_ok');
 		const panel = document.getElementById('message');
+
+		if (close){
+			const close_btn = document.getElementById("message_close");
+			close_btn.style.display = "block";
+		}
 	
 		if (onOK!=null){
 			btn.onclick = ()=>{ 
 				panel.style.display = 'none';
 				onOK.call((binder) ? binder : this); 
+				if (close){
+					const close_btn = document.getElementById("message_close");
+					close_btn.style.display = "none";
+				}
 			}
 		}else{
 			btn.onclick = function(){
@@ -97,9 +114,5 @@ export class UI{
 
 		panel.style.display = 'flex';
 	}
-
-    buyHints(){
-
-    }
 
 }

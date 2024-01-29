@@ -14,23 +14,24 @@ export class CGHandler{
 
         this.game = game;
         //Sizes 728x90, 300x250, 320x50, 468x60, 320x100
-        this.bannerHeight = 50;
+        this.bannerHeight = 0;
         this.bannerWidth = 320;
 
-        this.requestBanner();
+        //this.requestBanner();
 
-        window.addEventListener( "resize", this.resize.bind(this));
+        //window.addEventListener( "resize", this.resize.bind(this));
 
-        this.resize();
+        //this.resize();
     }
 
-    requestAd(){
+    requestAd(rewarded=false){
         let callbacks;
 
-        if (Math.random()>0.8){
+        if (rewarded){
             callbacks = { 
                 adFinished: () => { 
                     console.log("End rewarded ad (callback)");
+                    this.game.ui.showMessage("You've been rewarded 5 additional hints");
                     this.game.addHints(5);
                 },
                 adError: (error, errorData) => console.log("Error rewarded ad (callback)", error, errorData),
@@ -63,6 +64,7 @@ export class CGHandler{
     }
 
     resize(){
+
         const width = window.innerWidth;
         const height = window.innerHeight;
 
