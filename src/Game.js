@@ -10,9 +10,13 @@ import { Physics } from "./Physics"
 import { Tween } from "./Toon3D"
 import { SFX } from "./SFX"
 import { UI } from "./UI"
+import { LoadingBar } from "./LoadingBar"
+import { CGHandler } from "./CGHandler"
 
 export class Game{
     constructor(){
+        this.loadingBar = new LoadingBar({ color: "#004", opacity: 1, logo: "nik-logo.png" });
+
         this.init();
 
         this.clock = new Clock();
@@ -62,11 +66,9 @@ export class Game{
 
         }
 
-       // this.levelIndex = 11;
-
-        //this._hints = this.hints;
-
         this.loadSounds();
+
+        //this.cg = new CGHandler(this);
 
     }
 
@@ -86,6 +88,11 @@ export class Game{
         snds.forEach( snd => {
             this.sfx.load(snd, snd=="rolling");
         })
+    }
+
+    addHints( value ){
+        this.hints += value;
+        this.showMessage("You've been rewarded 5 extra hints");
     }
 
     set hints(value){
@@ -148,6 +155,8 @@ export class Game{
 		
 		let clientX = evt.targetTouches ? evt.targetTouches[0].pageX : evt.clientX;
 		let clientY = evt.targetTouches ? evt.targetTouches[0].pageY : evt.clientY;
+
+        if (this.cg) clientY -= this.cg.bannerHeight;
 		
 		const mouse = new Vector2();
 		mouse.x = (clientX / this.renderer.domElement.clientWidth) * 2 - 1;
@@ -257,7 +266,11 @@ export class Game{
     nextLevel(){
         this.stepPhysics = false;
         this.sfx.play("win");
-        this.ui.showMessage("Great work!", 40, this.initLevel, this)
+        this.ui.showMessage("Great work!", 40, this.initLevel, this);
+        if (this.cg){
+            this.cg.requestAd();
+            this.cg.requestBanner();
+        }
        // this.initLevel();
     }
 
@@ -330,6 +343,8 @@ export class Game{
         this.ui = new UI(this);
 
         this.ui.score = this.score; 
+
+        this.loadingBar.visible = false;
         
         this.initLevel(this.levelIndex);
 
@@ -591,7 +606,9 @@ export class Game{
                 'nz.jpg'
             ], () => {
                 //this.renderer.setAnimationLoop(this.render.bind(this));
-            } );
+            }, (xhr) => {
+                this.loadingBar.update("skybox", xhr.loaded, xhr.total );
+            });
     }
 
     initLevelPhysics(){
@@ -616,7 +633,7 @@ export class Game{
 
             this.scene.environment = envMap;
 
-        }, undefined, (err)=>{
+        }, (xhr) => this.loadingBar.update("env", xhr.loaded, xhr.total ), (err)=>{
             console.error( 'An error occurred setting the environment.' + err.message );
         } );
     }
@@ -736,7 +753,7 @@ export class Game{
 
             },
             // called while loading is progressing
-            null,
+            (xhr) => { this.loadingBar.update("bits", xhr.loaded, xhr.total ) },
             // called when loading has errors
             err => {
 
@@ -881,8 +898,9 @@ export class Game{
     }
 
     resize(){
-        this.camera.aspect = window.innerWidth / window.innerHeight;
+        const bannerHeight = (this.cg) ? this.cg.bannerHeight : 0;
+        this.camera.aspect = window.innerWidth / (window.innerHeight-bannerHeight);
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( window.innerWidth, window.innerHeight-bannerHeight );
     }
 }

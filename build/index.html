@@ -41,8 +41,10 @@
 	a:visited { text-decoration: none; } 
 	a:hover { text-decoration: none; color: black; } 
 	a:active { text-decoration: none; }
+	#banner-container { width: 100%; height: 50px; background-color: #3D455C; }
   </style>
 
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -51,93 +53,24 @@
       }
     }
   </script>
-  <script type="module" crossorigin src="./assets/index-Z9AVAaBT.js"></script>
+  <script type="module" crossorigin src="./assets/index-LAVyFekz.js"></script>
 </head>
 <body>
-  <div id="logo"><img src="logo.png" /></div>
-  <div id="courses"><a href="https://niklever.com/courses">CLICK TO LEARN TO CREATE GAMES</a></div>
-  <div id="message">
-	<button id="message_close">x</button>
-    <p id="message_text"></p>
-	<div id="paypal-button-container" style="display: none;"></div>
-    <button id="message_ok">OK</button>
-  </div>
-  <div id="level"><p>LEVEL</p><p id="level_text" class="ui-text">0</p></div>
-  <div id="score"><p>SCORE</p><p id="score_text" class="ui-text">0</p></div>
-  <div id="moves"><p id="moves_text" class="ui-text">0(0)</p><p>MOVES</p></div>
-  <button id="hint">HINT</button>
-  <button id="drop">DROP</button>
-  <button id="reset"><img src="./reset.png" width="50" height="50"></button>
-   <!-- Set up a container element for the button -->
+ 	<div id="banner-container"></div>
+	<div id="logo"><img src="logo.png" /></div>
+	<!--<div id="courses"><a href="https://niklever.com/courses">CLICK TO LEARN TO CREATE GAMES</a></div>-->
+	<div id="message">
+		<button id="message_close">x</button>
+		<p id="message_text"></p>
+		<!--<div id="paypal-button-container" style="display: none;"></div>-->
+		<button id="message_ok">OK</button>
+	</div>
+	<div id="level"><p>LEVEL</p><p id="level_text" class="ui-text">0</p></div>
+	<div id="score"><p>SCORE</p><p id="score_text" class="ui-text">0</p></div>
+	<div id="moves"><p id="moves_text" class="ui-text">0(0)</p><p>MOVES</p></div>
+	<button id="hint">HINT</button>
+	<button id="drop">DROP</button>
+	<button id="reset"><img src="./reset.png" width="50" height="50"></button>
 
-   <!-- Include the PayPal JavaScript SDK -->
-   <!--<script src="https://www.paypal.com/sdk/js?client-id=AeJ-QER2Miu-Mmlnhbg2imZ4Qbzz9kAc_qfgUZ7Vt-IYL8PPExRB7z2HWJFEYU_rQleYrcoHgilYMauP&currency=USD"></script>
-
-   <script>
-	   // Render the PayPal button into #paypal-button-container
-	   paypal.Buttons({
-
-		   // Call your server to set up the transaction
-		   createOrder: function(data, actions) {
-			   return fetch('/demo/checkout/api/paypal/order/create/', {
-				   method: 'post'
-			   }).then(function(res) {
-				   return res.json();
-			   }).then(function(orderData) {
-				   return orderData.id;
-			   });
-		   },
-
-		   // Call your server to finalize the transaction
-		   onApprove: function(data, actions) {
-			   return fetch('/demo/checkout/api/paypal/order/' + data.orderID + '/capture/', {
-				   method: 'post'
-			   }).then(function(res) {
-				   return res.json();
-			   }).then(function(orderData) {
-				   // Three cases to handle:
-				   //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-				   //   (2) Other non-recoverable errors -> Show a failure message
-				   //   (3) Successful transaction -> Show confirmation or thank you
-
-				   // This example reads a v2/checkout/orders capture response, propagated from the server
-				   // You could use a different API or structure for your 'orderData'
-				   var errorDetail = Array.isArray(orderData.details) && orderData.details[0];
-
-				   if (errorDetail && errorDetail.issue === 'INSTRUMENT_DECLINED') {
-					   return actions.restart(); // Recoverable state, per:
-					   // https://developer.paypal.com/docs/checkout/integration-features/funding-failure/
-				   }
-
-				   if (errorDetail) {
-					   var msg = 'Sorry, your transaction could not be processed.';
-					   if (errorDetail.description) msg += '\n\n' + errorDetail.description;
-					   if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
-					   return alert(msg); // Show a failure message (try to avoid alerts in production environments)
-				   }
-
-				   // Successful capture! For demo purposes:
-				   console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-				   var transaction = orderData.purchase_units[0].payments.captures[0];
-				   alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
-
-				   // Replace the above to show a success message within this page, e.g.
-				   // const element = document.getElementById('paypal-button-container');
-				   // element.innerHTML = '';
-				   // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-				   // Or go to another URL:  actions.redirect('thank_you.html');
-			   });
-		   }
-
-	   }).render('#paypal-button-container');
-   </script>-->
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "../../../node_modules/three/build/three.module.js",
-        "three/addons/": "../../../node_modules/three/examples/jsm/"
-      }
-    }
-  </script>
 </body>
 </html>
