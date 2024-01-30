@@ -12,6 +12,7 @@ import { SFX } from "./SFX"
 import { UI } from "./UI"
 import { LoadingBar } from "./LoadingBar"
 import { CGHandler } from "./CGHandler"
+import { Tutorial } from "./Tutorial"
 
 export class Game{
     constructor(){
@@ -43,10 +44,10 @@ export class Game{
         this._hints = 20;
 
         if ( localStorage ){
-            if (false){
+            if (true){
                 localStorage.setItem("score", 0);
                 localStorage.setItem("levelIndex", 0);
-                localStorage.setItem("hints", 0);
+                localStorage.setItem("hints", 2);
             }
 
             const score = Number(localStorage.getItem( "score" ));
@@ -63,6 +64,10 @@ export class Game{
         this.loadSounds();
 
         this.cg = new CGHandler(this);
+
+        this.tutorial = new Tutorial(this);
+
+        if (this.levelIndex==0) this.tutorial.start();
 
     }
 
@@ -148,6 +153,14 @@ export class Game{
         this.loadLevels();
     }
 
+    zoom( plus ){
+        if (plus){
+            this.camera.translateZ(-0.5);
+        }else{
+            this.camera.translateZ(0.5);
+        }
+    }
+
     tap(evt){
 		if (!this.interactive) return;
 		
@@ -211,6 +224,7 @@ export class Game{
 	}
 
     dropBall(){
+        if (!this.interactive) return;
         if (this.selected) this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
         delete this.selected;
         this.arrows.visible = false;
@@ -552,9 +566,11 @@ export class Game{
 		    delete this.selected;
         }
 		this.arrows.visible = false;
+        if (this.cg) this.cg.requestAd();
 	}
 
     showHint(){
+        if (!this.interactive) return;
 		if (this.hints<=0){
 			this.ui.showMessage("You are out of hints. You get one new hint per level. Or get 5 hints by viewing a rewarded ad.<br>Press x to cancel.", 20, this.buyHints, this, true );
 			this.sfx.play("boing");

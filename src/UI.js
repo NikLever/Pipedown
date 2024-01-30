@@ -1,33 +1,10 @@
 export class UI{
     constructor(game){
-        this.messages = { 
-			text:[ 
-			"Welcome to Pipedown. The game has 50 levels.",
-			"Press x to skip the instructions.",
-			"The aim is to slide the pipes so they all join.",
-			"The top pipe should be just below the ball",
-			"The bottom pipe just above the crate",
-			"Click and drag to change your view",
-			"Pinch or right click and drag to zoom",
-			"Click a pipe to select it",
-			"Click an arrow to move the selected pipe",
-			"When the pipes are all connected click the ball.",
-			"If the ball passes through every pipe and lands in the crate, you've completed the level.",
-			"Points are awarded for the minimum number of moves to complete a level.",
-			"If you get stuck press the hint button to see the solution for a few seconds",
-			"The numbers in the MOVES panel are the total number of slides you've made and the minimum to solve the level in brackets.",
-			"The levels start easy and get MUCH, MUCH harder.",
-			"GOOD LUCK!"
-			],
-			index:0
-		}
 
         this.game = game;
 
         const logo = document.getElementById("logo");
         logo.style.top = "-200px";
-
-        if (this.game.levelIndex==0) setTimeout(()=>{ this.startMessages(); }, 2300);
 
         const btn = document.getElementById("hint");
 		btn.onclick = () => { this.game.showHint(); }
@@ -46,6 +23,12 @@ export class UI{
 
 		const btn4 = document.getElementById("drop");
 		btn4.onclick = () => { this.game.dropBall(); }
+
+		const btn5 = document.getElementById("zoom-in");
+		btn5.onclick = () => { this.game.zoom(true); }
+
+		const btn6 = document.getElementById("zoom-out");
+		btn6.onclick = () => { this.game.zoom(false); }
 
 		if (this.game.levelIndex>0){
 			const btn = document.getElementById("message_close");

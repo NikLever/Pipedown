@@ -62,7 +62,24 @@ class SFX{
     pause(name){
         const sound = this.sounds[name];
 
-        if (sound !== undefined) sound.pause();
+        if (sound !== undefined && sound.isPlaying) sound.pause();
+    }
+
+    pauseAll(){
+        this.paused = [];
+        for(let name in this.sounds){
+            const sound = this.sounds[name];
+            if (sound.isPlaying){
+                sound.pause();
+                this.paused.push(sound);
+            }
+        }
+    }
+
+    unPauseAll(){
+        if (this.paused==null) return;
+
+        this.paused.forEach( sound => sound.play() );
     }
 }
 

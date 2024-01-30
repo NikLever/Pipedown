@@ -30,19 +30,26 @@ export class CGHandler{
         if (rewarded){
             callbacks = { 
                 adFinished: () => { 
-                    console.log("End rewarded ad (callback)");
+                    //console.log("End rewarded ad (callback)");
                     this.game.ui.showMessage("You've been rewarded 5 additional hints");
                     this.game.addHints(5);
+                    this.game.sfx.unPauseAll();
                 },
                 adError: (error, errorData) => console.log("Error rewarded ad (callback)", error, errorData),
-                adStarted: () => console.log("Start rewarded ad (callback)")
+                adStarted: () => {
+                    this.game.sfx.pauseAll();
+                }
             }
             this.cg.ad.requestAd("rewarded", callbacks);
         }else{
             callbacks = {
-                adFinished: () => console.log("End midgame ad (callback)"),
+                adFinished: () => {
+                    this.game.sfx.unPauseAll();
+                },
                 adError: (error, errorData) => console.log("Error midgame ad (callback)", error, errorData),
-                adStarted: () => console.log("Start midgame ad (callback)"),
+                adStarted: () => {
+                    this.game.sfx.pauseAll();
+                },
             };
 
             this.cg.ad.requestAd("midgame", callbacks);
