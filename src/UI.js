@@ -1,5 +1,12 @@
 export class UI{
     constructor(game){
+		this.messages = { 
+			text:[ 
+			"Welcome to Pipedown. The game has 50 levels.",
+			"The aim is to slide the pipes so they all join."
+			],
+			index:0
+		}
 
         this.game = game;
 
