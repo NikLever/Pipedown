@@ -41,13 +41,16 @@ export class Game{
 
         this.score = 0;
         this.levelIndex = 0;
-        this._hints = 20;
+        this._hints = 10;
 
         if ( localStorage ){
-            if (true){
+            const cleared = localStorage.getItem('cleared1') | 0;
+
+            if (!cleared){
                 localStorage.setItem("score", 0);
                 localStorage.setItem("levelIndex", 0);
-                localStorage.setItem("hints", 2);
+                localStorage.setItem("hints", 10);
+                localStorage.setItem("cleared1", 1);
             }
 
             const score = Number(localStorage.getItem( "score" ));
@@ -56,18 +59,17 @@ export class Game{
 
             if (score != null) this.score = score;
             if (levelIndex != null) this.levelIndex = levelIndex;
-            if (hints != null){
-                this._hints = hints;
-            }
+            if (hints != null) this._hints = hints;
         }
 
         this.loadSounds();
 
         this.cg = new CGHandler(this);
 
-        this.tutorial = new Tutorial(this);
-
-        if (this.levelIndex==0) this.tutorial.start();
+        if (this.levelIndex==0){
+            this.tutorial = new Tutorial(this);
+            //this.tutorial.start();
+        }
 
     }
 
@@ -183,6 +185,15 @@ export class Game{
 				const arrow = intersectedArrows[0].object.parent;
 				console.log(arrow.name + ' ' + JSON.stringify(arrow.move));
 				const endValue = this.selected.position[arrow.move.axis] + arrow.move.offset;
+
+                if (this.tutorial){
+                    if (this.tutorial.step != 4){
+                        return;
+                    }else if (arrow.name != "Back"){
+                        this.sfx.play("boing");
+                        return;
+                    }
+                }
 				
                 this.moveCount++;
                 this.ui.moves = `${this.moveCount}(${this.minMove})`;
@@ -192,6 +203,7 @@ export class Game{
 					delete this.tween;
 					this.selectPipe(this.selected);
                     this.physics.setMeshPosition(this.selected, this.selected.position);
+                    if (this.tutorial) this.tutorial.nextStep();
 				});
 
 				this.moves.count++;
@@ -208,12 +220,20 @@ export class Game{
 		
 		if (intersectedObjects.length>0){
 			const object = intersectedObjects[0].object;
-			if (this.selectPipe(object)){
-				this.sfx.play("click");
-			}else{
-				this.sfx.play("boing");
-			}
-			
+            if (this.tutorial){
+                if (this.tutorial.step == 3 && object == this.level.children[1] && this.selectPipe(object)){
+                    this.sfx.play("click");
+                    this.tutorial.nextStep();
+                }else{
+                    this.sfx.play("boing");
+                }
+            }else{
+                if (this.selectPipe(object)){
+                    this.sfx.play("click");
+                }else{
+                    this.sfx.play("boing");
+                }
+            }
 			//console.log(JSON.stringify(this.getCell(object)));
 		}else{
 			intersectedObjects = this.raycaster.intersectObjects([this.bits.ball, this.bits.sucker], false);	
@@ -224,6 +244,7 @@ export class Game{
 	}
 
     dropBall(){
+        if (this.tutorial && this.tutorial.step != 5) return;
         if (!this.interactive) return;
         if (this.selected) this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
         delete this.selected;
@@ -269,6 +290,10 @@ export class Game{
             if (localStorage) localStorage.setItem("score", this.score);
             this.ui.score = this.score;
             this.nextLevel();
+            if (this.tutorial){
+                this.tutorial.end();
+                delete this.tutorial;
+            }
         }else{
             this.ui.showMessage("The ball did not pass through every pipe", 25, this.endDrop, this);
             this.stepPhysics = false;
@@ -572,13 +597,13 @@ export class Game{
     showHint(){
         if (!this.interactive) return;
 		if (this.hints<=0){
-			this.ui.showMessage("You are out of hints. You get one new hint per level. Or get 5 hints by viewing a rewarded ad.<br>Press x to cancel.", 20, this.buyHints, this, true );
+			this.ui.showMessage("You are out of hints. You get one new hint per level. Or get 5 hints by viewing a rewarded ad.<br>Press x to cancel.", 20, this.buyHints, this, true, 'Watch Rewarded Ad' );
 			this.sfx.play("boing");
 			return;
 		}
 		this.arrows.visible = false;
 		this.sfx.play("click");
-		this._hints--;
+		if (!this.tutorial) this._hints--;
 		this.hints = this._hints;
 		this.hintButtonActive = (this.hints>0);
 		//console.log("Show hint pressed");
@@ -604,9 +629,14 @@ export class Game{
 		}
 		this.sfx.play("swish");
 		this.interactive = true;
+
+        if (this.tutorial) this.tutorial.nextStep();
+
         delete this.hintTime;
         const btn = document.getElementById('hint');
+        
 		btn.childNodes[0].nodeValue = `HINT (${this._hints})`;
+
 		if (this.selected!=undefined) this.arrows.visible = true;
 	}
 
@@ -910,6 +940,9 @@ export class Game{
 		    btn.childNodes[0].nodeValue = `HINT (${t.toFixed(1)})`;
         }
         if (this.tween) this.tween.update(dt);
+
+        if (this.tutorial) this.tutorial.update(dt);
+        
         this.renderer.render( this.scene, this.camera );  
     }
 

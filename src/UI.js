@@ -24,8 +24,8 @@ export class UI{
 			const panel = document.getElementById('message');
 			panel.style.display = 'none';
 			btn3.style.display = "none";
-			const progress = document.getElementById("message_progress");
-			progress.style.display = "none";
+			//const progress = document.getElementById("message_progress");
+			//progress.style.display = "none";
 		 }
 
 		const btn4 = document.getElementById("drop");
@@ -40,22 +40,26 @@ export class UI{
 		if (this.game.levelIndex>0){
 			const btn = document.getElementById("message_close");
 			btn.style.display = "none";
-			const progress = document.getElementById("message_progress");
-			progress.style.display = "none";
+			//const progress = document.getElementById("message_progress");
+			//progress.style.display = "none";
+		}else{
+			this.startMessages();
 		}
     }
 
     startMessages(){
 		this.game.sfx.play("click");
-		const progress = document.getElementById("message_progress");
+		//const progress = document.getElementById("message_progress");
 		if (this.messages.index<(this.messages.text.length-1)){
-			progress.innerHTML = `${this.messages.index+1} of ${this.messages.text.length}`;
+			//progress.innerHTML = `${this.messages.index+1} of ${this.messages.text.length}`;
 			this.showMessage(this.messages.text[this.messages.index], 25, this.startMessages);
 		}else{
-			this.showMessage(this.messages.text[this.messages.index], 25);
+			this.showMessage(this.messages.text[this.messages.index], 25, () => {
+				this.game.tutorial.start();
+			});
 			const btn = document.getElementById("message_close");
 			btn.style.display = "none";
-			progress.style.display = "none";
+			//progress.style.display = "none";
 		}
 		this.messages.index++;
 	}
@@ -75,12 +79,15 @@ export class UI{
 		txt.innerHTML = value;
     }
 
-    showMessage(msg, fontSize=20, onOK=null, binder=null, close=false){
+    showMessage(msg, fontSize=20, onOK=null, binder=null, close=false, ok_txt='OK'){
 		const txt = document.getElementById('message_text');
 		txt.innerHTML = msg;
 		txt.style.fontSize = fontSize + 'px';
+
 		const btn = document.getElementById('message_ok');
 		const panel = document.getElementById('message');
+
+		btn.innerHTML = ok_txt;
 
 		if (close){
 			const close_btn = document.getElementById("message_close");
