@@ -44,13 +44,14 @@ export class Game{
         this._hints = 10;
 
         if ( localStorage ){
-            const cleared = localStorage.getItem('cleared1') | 0;
+            const cleared = localStorage.getItem('cleared2') | 0;
 
             if (!cleared){
                 localStorage.setItem("score", 0);
                 localStorage.setItem("levelIndex", 0);
                 localStorage.setItem("hints", 10);
-                localStorage.setItem("cleared1", 1);
+                localStorage.removeItem("cleared1");
+                localStorage.setItem("cleared2", 1);
             }
 
             const score = Number(localStorage.getItem( "score" ));
