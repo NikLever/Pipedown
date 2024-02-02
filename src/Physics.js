@@ -15,7 +15,7 @@ export class Physics{
         this.ZERO = new Vector3();
 
         this.clock = new Clock();
-        this.fixedstep = 1/60;
+        this.fixedstep = 1/120;
     }
 
     async initPhysics() {
@@ -165,8 +165,17 @@ export class Physics{
 
 	step() {
         const dt = this.clock.getDelta();
-		this.world.timestep = (dt>this.fixedstep) ? this.fixedstep : dt; 
-		this.world.step();
+        let time = 0;
+
+        this.world.timestep = this.fixedstep;
+
+        do{
+		    this.world.step();
+            time += this.fixedstep;
+        }while( (dt - time) > this.fixedstep );
+
+        this.world.timestep = dt - time;
+        this.world.step();
 
 		this.meshes.forEach( mesh => {
 

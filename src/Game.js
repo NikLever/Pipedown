@@ -71,6 +71,27 @@ export class Game{
             //this.tutorial.start();
         }
 
+        this.buttons = [];
+        const btns = ['zoom-in', 'zoom-out', 'reset', 'drop', 'hint'];
+
+        btns.forEach( name => {
+            const btn = document.getElementById(name);
+            this.buttons.push(btn);
+        });
+
+    }
+
+    enableButtons(mode){
+        this.buttons.forEach( btn => {
+            if (mode){
+                btn.disabled = false;
+                btn.style.opacity = 1;
+            }else{
+                btn.disabled = true;
+                btn.style.opacity = 0.5;
+            }
+        })
+        
     }
 
     loadSounds(){
@@ -615,6 +636,8 @@ export class Game{
 		this.interactive = false;
 		this.sfx.play("swish");
 
+        this.enableButtons(false);
+
         this.hintTime = Date.now();
 
 		setTimeout(()=>{ this.endHint();}, 5000);
@@ -629,6 +652,7 @@ export class Game{
 		}
 		this.sfx.play("swish");
 		this.interactive = true;
+        this.enableButtons(true);
 
         if (this.tutorial) this.tutorial.nextStep();
 

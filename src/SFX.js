@@ -74,12 +74,15 @@ class SFX{
                 this.paused.push(sound);
             }
         }
+        this.volume = this.listener.getMasterVolume();
     }
 
     unPauseAll(){
         if (this.paused==null) return;
 
         this.paused.forEach( sound => sound.play() );
+
+        if (this.volume) this.listener.setMasterVolume( this.volume );
     }
 }
 
