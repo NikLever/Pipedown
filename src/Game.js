@@ -1,6 +1,6 @@
 import {
     Clock, Raycaster, Vector3, Scene, Color, PerspectiveCamera, HemisphereLight, DirectionalLight,
-    WebGLRenderer, Vector2, Group, Mesh, SphereGeometry, PMREMGenerator, CubeTextureLoader, MeshBasicMaterial
+    WebGLRenderer, Vector2, Group, Mesh, SphereGeometry, PMREMGenerator, CubeTextureLoader, MeshBasicMaterial, BackSide
 } from "three"
 import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
@@ -267,6 +267,7 @@ export class Game{
 
     dropBall(){
         if (this.tutorial && this.tutorial.step != 5) return;
+        if (this.tutorial) this.tutorial.nextStep();
         if (!this.interactive) return;
         if (this.selected) this.selected.children[0].children[this.selected.children[0].userData.frameIndex].material = this.frameMaterial.normal;
         delete this.selected;

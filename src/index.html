@@ -39,8 +39,8 @@
 	#reset{ position: absolute; bottom: 130px; right: 10px; }
 	#help{ position: absolute; bottom: 190px; right: 10px; }
 	.svgbtn{border: none; background-color: transparent; z-index: 99; width: 48px; height: 48px; }
-	#zoom-in{ position: absolute; background-image: url( './zoom-in.svg' ); bottom: 190px; right: 80px; animation-duration: 3s; animation-iteration-count: infinite; }
-	#zoom-out{ position: absolute; background-image: url( './zoom-out.svg' ); bottom: 190px; right: 30px; animation-duration: 3s; animation-iteration-count: infinite;}
+	#zoom-in{ position: absolute; background-image: url( './zoom-in.svg' ); bottom: 190px; right: 80px; }
+	#zoom-out{ position: absolute; background-image: url( './zoom-out.svg' ); bottom: 190px; right: 30px; }
 	#logo{ position: absolute; left: 50%; top: 50%; width:70%; transform: translate( -50%, -50% ); z-index: 101;
 		transition-property: top; transition-duration: 1s; transition-timing-function: ease-in; transition-delay: 2s;}
 	#logo img { width: 100%; object-fit: contain; }	
@@ -55,17 +55,30 @@
 	.filter-blue { filter: invert(44%) sepia(91%) saturate(2012%) hue-rotate(163deg) brightness(97%) contrast(101%); }
 	.filter-black { filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%); }
 	#hand { display: none; position: absolute; top: 50%; right: 0%; width: 30%; z-index: 120; animation-name: pan; animation-duration: 3s; animation-iteration-count: infinite; }
-	
+	#arrow { display: none; position: absolute; bottom: 200px; right: 150px; width: 15%; z-index: 120; animation-name: point; animation-duration: 1.5s; animation-iteration-count: infinite; }
+	.circle { display: none; border-radius: 25px; border:#009fb7 solid 5px; width: 50px; height: 50px; margin: -5px 0px 5px -15px; animation-name: flash2; animation-duration: 3s; animation-iteration-count: infinite;}
 	@keyframes pan {
 		0%   {right: 0%;}
 		50%  {right: 20%;}
 		100% {right: 0%;}
 	}
 
+	@keyframes point {
+		0%   {right: 150px;}
+		50%  {right: 170px;}
+		100% {right: 150px;}
+	}
+
 	@keyframes flash {
 		0%   {background-color: #3D455C;}
 		50%  {background-color: #009fb7;}
 		100% {background-color: #3D455C;}
+	}
+
+	@keyframes flash2 {
+		0%   {opacity: 0;}
+		50%  {opacity: 1;}
+		100% {opacity: 0;}
 	}
   </style>
   <script type="importmap">
@@ -93,9 +106,10 @@
 	<button id="drop" class="txtbtn">DROP</button>
 	<button id="reset" class="txtbtn">RESET</button>
 	<!--<button id="help" class="txtbtn">HELP</button>-->
-	<button id="zoom-in" class="svgbtn"></button>
-	<button id="zoom-out" class="svgbtn"></button>
+	<button id="zoom-in" class="svgbtn"><div class="circle"></div></button>
+	<button id="zoom-out" class="svgbtn"><div class="circle"></div></button>
 	<div id="hand"><img src="hand.png" width="100%"/></div>
+	<div id="arrow"><img src="arrow.png" width="100%"/></div>
 
 	<script type="module">
 		import { Game } from "./Game.js"

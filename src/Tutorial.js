@@ -1,3 +1,5 @@
+import { Color } from 'three'
+
 export class Tutorial{
     constructor(game){
         this.game = game;
@@ -11,7 +13,8 @@ export class Tutorial{
             "If you get stuck press the hint button to see the solution for a few seconds. Try it now.",
             "Click the unconnected pipe bend to select it",
             "Click the arrow to move the selected pipe into the gap",
-            "Click the ball or DROP button."
+            "Click the ball or DROP button.",
+            ""
         ]
 
         this.active = false;
@@ -63,7 +66,13 @@ export class Tutorial{
         this.txt.style.display = 'none';
     }
 
-    update(){
+    setArrow( bottom, display){
+        const arrow = document.getElementById("arrow");
+        arrow.style.bottom = bottom;
+        arrow.style.display = display;
+    }
+
+    update(dt){
         switch(this.step){
             case 0: //change view
             if (this.setupStep){
@@ -77,12 +86,14 @@ export class Tutorial{
             if (this.setupStep){
                 const hand = document.getElementById("hand");
                 hand.style.display = "none";
-                const zoomOut = document.getElementById("zoom-out");
-                zoomOut.style.animationName = "flash";
-                const zoomIn = document.getElementById("zoom-in");
-                zoomIn.style.animationName = "flash";
+                const circle1 = document.getElementById("zoom-out").getElementsByClassName("circle")[0];
+                circle1.style.display = "block";
+                const circle2 = document.getElementById("zoom-in").getElementsByClassName("circle")[0];
+                circle2.style.display = "block";
+                this.setArrow( '200px', 'block');
                 this.enableButtons(false, ['zoom-in', 'zoom-out']);
                 this.camZ = this.game.camera.position.z;
+                this.game.controls.removeEventListener("end", step1Listener);
                 this.setupStep = false;
             }else{
                 if (Math.abs(this.game.camera.position.z - this.camZ) > 0.05){
@@ -92,10 +103,11 @@ export class Tutorial{
             break;
             case 2://Hint
             if (this.setupStep){
-                const zoomOut = document.getElementById("zoom-out");
-                zoomOut.style.animationName = "";
-                const zoomIn = document.getElementById("zoom-in");
-                zoomIn.style.animationName = "";
+                const circle1 = document.getElementById("zoom-out").getElementsByClassName("circle")[0];
+                circle1.style.display = "none";
+                const circle2 = document.getElementById("zoom-in").getElementsByClassName("circle")[0];
+                circle2.style.display = "none";
+                this.setArrow( '10px', 'block');
                 const hint = document.getElementById("hint");
                 hint.style.animationName = "flash";
                 this.enableButtons(false, ['hint']);
@@ -104,19 +116,72 @@ export class Tutorial{
             break;
             case 3://Select pipe
             if (this.setupStep){
+                const hint = document.getElementById("hint");
+                hint.style.animationName = "";
                 this.enableButtons(false);
                 this.setupStep = false;
+                this.setArrow( '0px', 'none');
+                const pipeframe = this.game.level.children[1].children[0].children[this.game.level.children[1].children[0].userData.frameIndex];
+                this.flashData = { object: pipeframe, time: 0, normal: true };
+            }
+            if (this.flashData){
+                this.flashData.time += dt;
+                if (this.flashData.time>0.5){
+                    if (this.flashData.normal){
+                        this.flashData.object.material = this.game.frameMaterial.highlighted;
+                    }else{
+                        this.flashData.object.material = this.game.frameMaterial.normal;
+                    }
+                    this.flashData.time = 0;
+                    this.flashData.normal = !this.flashData.normal;
+                }
             }
             break;
             case 4://Click arrow
+            if (this.setupStep){
+                const arrow = this.game.arrows.getObjectByName("Back");
+                const material = arrow.children[0].material.clone();
+                arrow.children.forEach( child => {
+                    child.material = material;
+                })
+                this.flashData = { object: arrow, time: 0, normal: true, colora: arrow.children[0].material.color, colorb: new Color( 0xFFFF00 ) };
+                this.setupStep = false;
+            }
+            if (this.flashData){
+                this.flashData.time += dt;
+                if (this.flashData.time>0.5){
+                    const color = ( this.flashData.normal ) ? this.flashData.colorb : this.flashData.colora;
+                    this.flashData.object.children.forEach( child => {
+                        child.material.color = color;
+                    })
+                    this.flashData.time = 0;
+                    this.flashData.normal = !this.flashData.normal;
+                }
+            }
             break;
             case 5://Drop ball
             if (this.setupStep){
                 const drop = document.getElementById("drop");
                 drop.style.animationName = "flash";
                 this.enableButtons(false, ['drop']);
+                this.setArrow( "80px", 'block');
+                const arrowa = this.flashData.object;
+                const arrowb = this.game.arrows.getObjectByName('Left');
+                for(let i=0; i<3; i++){
+                    arrowa.children[i].material = arrowb.children[i].material;
+                }
+                delete this.flashData;
                 this.setupStep = false;
             }
+            break;
+            case 6:
+            if (this.setupStep){
+                const drop = document.getElementById("drop");
+                drop.style.animationName = "";
+                this.setArrow( '0px', 'none');
+                this.txt.style.display = 'none';
+                this.setupStep = false;
+            }  
             break;
         }
 
