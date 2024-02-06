@@ -67,12 +67,20 @@ export class Tutorial{
         switch(this.step){
             case 0: //change view
             if (this.setupStep){
+                const hand = document.getElementById("hand");
+                hand.style.display = "block";
                 this.enableButtons(false);
                 this.game.controls.addEventListener("end", step1Listener);
                 this.setupStep = false;
             }
             case 1: //Zoom
             if (this.setupStep){
+                const hand = document.getElementById("hand");
+                hand.style.display = "none";
+                const zoomOut = document.getElementById("zoom-out");
+                zoomOut.style.animationName = "flash";
+                const zoomIn = document.getElementById("zoom-in");
+                zoomIn.style.animationName = "flash";
                 this.enableButtons(false, ['zoom-in', 'zoom-out']);
                 this.camZ = this.game.camera.position.z;
                 this.setupStep = false;
@@ -84,6 +92,12 @@ export class Tutorial{
             break;
             case 2://Hint
             if (this.setupStep){
+                const zoomOut = document.getElementById("zoom-out");
+                zoomOut.style.animationName = "";
+                const zoomIn = document.getElementById("zoom-in");
+                zoomIn.style.animationName = "";
+                const hint = document.getElementById("hint");
+                hint.style.animationName = "flash";
                 this.enableButtons(false, ['hint']);
                 this.setupStep = false;
             }
@@ -98,6 +112,8 @@ export class Tutorial{
             break;
             case 5://Drop ball
             if (this.setupStep){
+                const drop = document.getElementById("drop");
+                drop.style.animationName = "flash";
                 this.enableButtons(false, ['drop']);
                 this.setupStep = false;
             }

@@ -165,6 +165,8 @@ export class Physics{
 
 	step() {
         const dt = this.clock.getDelta();
+        if (dt>(1/10)) dt = 1/10;
+
         let time = 0;
 
         this.world.timestep = this.fixedstep;
