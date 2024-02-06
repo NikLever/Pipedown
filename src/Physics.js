@@ -151,7 +151,7 @@ export class Physics{
 
 	setMeshVelocity( mesh, velocity, index = 0 ) {
 
-		const body = this.meshMap.get( mesh );
+		let body = this.meshMap.get( mesh );
 
 		if ( mesh.isInstancedMesh ) {
 
@@ -164,7 +164,7 @@ export class Physics{
 	}
 
 	step() {
-        const dt = this.clock.getDelta();
+        let dt = this.clock.getDelta();
         if (dt>(1/10)) dt = 1/10;
 
         let time = 0;

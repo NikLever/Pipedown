@@ -53,17 +53,19 @@
 	#banner-container { width: 100%; height: 50px; background-color: #3D455C; }
 	.filter-grey { filter: invert(30%) sepia(0%) saturate(3082%) hue-rotate(344deg) brightness(100%) contrast(86%); }
 	.filter-blue { filter: invert(44%) sepia(91%) saturate(2012%) hue-rotate(163deg) brightness(97%) contrast(101%); }
-	.filter-black { filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%); };
-	#hand { display: none; position: absolute; top: 50%; left: 50%; width: 30%; z-index: 99; animation-name: pan; animation-duration: 3s; animation-iteration-count: infinite; }
+	.filter-black { filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%); }
+	#hand { display: none; position: absolute; top: 50%; right: 0%; width: 30%; z-index: 120; animation-name: pan; animation-duration: 3s; animation-iteration-count: infinite; }
+	
 	@keyframes pan {
-		0%   {left: 50%;}
-		50%  {left: 75%;}
-		100% {left: 50%;}
+		0%   {right: 0%;}
+		50%  {right: 20%;}
+		100% {right: 0%;}
 	}
+
 	@keyframes flash {
-		0%   {filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%);}
-		50%  {filter: invert(44%) sepia(91%) saturate(2012%) hue-rotate(163deg) brightness(97%) contrast(101%);}
-		100% {filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%);}
+		0%   {background-color: #3D455C;}
+		50%  {background-color: #009fb7;}
+		100% {background-color: #3D455C;}
 	}
   </style>
   <script type="importmap">
