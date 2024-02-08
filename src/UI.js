@@ -13,6 +13,10 @@ export class UI{
         const logo = document.getElementById("logo");
         logo.style.top = "-200px";
 
+		logo.addEventListener("transitionend", (event) => {
+			logo.style.display = 'none';
+		});
+
         const btn = document.getElementById("hint");
 		btn.onclick = () => { this.game.showHint(); }
 		

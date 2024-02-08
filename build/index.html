@@ -54,7 +54,7 @@
 	.filter-grey { filter: invert(30%) sepia(0%) saturate(3082%) hue-rotate(344deg) brightness(100%) contrast(86%); }
 	.filter-blue { filter: invert(44%) sepia(91%) saturate(2012%) hue-rotate(163deg) brightness(97%) contrast(101%); }
 	.filter-black { filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%); }
-	#hand { display: none; position: absolute; top: 50%; right: 0%; width: 30%; z-index: 120; animation-name: pan; animation-duration: 3s; animation-iteration-count: infinite; }
+	#hand { display: none; pointer-events: none; position: absolute; top: 50%; right: 0%; width: 20%; z-index: 120; animation-name: pan; animation-duration: 3s; animation-iteration-count: infinite; }
 	#arrow { display: none; position: absolute; bottom: 200px; right: 150px; width: 15%; z-index: 120; animation-name: point; animation-duration: 1.5s; animation-iteration-count: infinite; }
 	.circle { display: none; border-radius: 25px; border:#009fb7 solid 5px; width: 50px; height: 50px; margin: -5px 0px 5px -15px; animation-name: flash2; animation-duration: 3s; animation-iteration-count: infinite;}
 	@keyframes pan {
@@ -91,7 +91,7 @@
       }
     }
   </script>
-  <script type="module" crossorigin src="./assets/index-BMjmE6Kh.js"></script>
+  <script type="module" crossorigin src="./assets/index-0iw53rw9.js"></script>
 </head>
 <body>
 	<div id="logo"><img src="logo.png" /></div>
@@ -111,7 +111,7 @@
 	<button id="zoom-in" class="svgbtn"><div class="circle"></div></button>
 	<button id="zoom-out" class="svgbtn"><div class="circle"></div></button>
 	<div id="hand"><img src="hand.png" width="100%"/></div>
-	<div id="arrow"><img src="arrow.png" width="100%"/></div>
+	<div id="arrow" draggable="false"><img draggable="false" src="arrow.png" width="100%"/></div>
 
 
 </body>

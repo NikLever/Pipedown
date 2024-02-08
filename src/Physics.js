@@ -138,7 +138,8 @@ export class Physics{
 
 	}
 
-	setMeshPosition( mesh, position ) {
+	setMeshPosition( mesh, position  ) {
+        if (position == null) position = mesh.position;
 
 		const body = this.meshMap.get( mesh );
 
@@ -147,6 +148,18 @@ export class Physics{
 		body.setTranslation( position );
 
         mesh.position.copy(position);
+	}
+
+    setMeshQuaternion( mesh, quaternion  ) {
+        if (quaternion == null) quaternion = mesh.quaternion;
+
+		const body = this.meshMap.get( mesh );
+
+		body.setAngvel( this.ZERO );
+		body.setLinvel( this.ZERO );
+		body.setRotation( quaternion );
+
+        mesh.quaternion.copy(quaternion);
 	}
 
 	setMeshVelocity( mesh, velocity, index = 0 ) {

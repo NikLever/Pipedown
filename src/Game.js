@@ -44,14 +44,14 @@ export class Game{
         this._hints = 10;
 
         if ( localStorage ){
-            const cleared = localStorage.getItem('cleared4') | 0;
+            const cleared = localStorage.getItem('cleared5') | 0;
 
             if (!cleared){
                 localStorage.setItem("score", 0);
                 localStorage.setItem("levelIndex", 0);
                 localStorage.setItem("hints", 10);
-                localStorage.removeItem("cleared3");
-                localStorage.setItem("cleared4", 1);
+                localStorage.removeItem("cleared4");
+                localStorage.setItem("cleared5", 1);
             }
 
             const score = Number(localStorage.getItem( "score" ));
@@ -190,8 +190,6 @@ export class Game{
 		
 		let clientX = evt.targetTouches ? evt.targetTouches[0].pageX : evt.clientX;
 		let clientY = evt.targetTouches ? evt.targetTouches[0].pageY : evt.clientY;
-
-        if (this.cg) clientY -= this.cg.bannerHeight;
 		
 		const mouse = new Vector2();
 		mouse.x = (clientX / this.renderer.domElement.clientWidth) * 2 - 1;
@@ -296,6 +294,7 @@ export class Game{
             this.setPipeMaterial(pipe);
         });
         this.physics.setMeshPosition(this.bits.ball, this.startPosition);
+        if (this.cg) this.cg.requestAd();
     }
 
     checkPipes(){
@@ -328,7 +327,7 @@ export class Game{
         this.stepPhysics = false;
         this.sfx.play("win");
         this.ui.showMessage("Great work!", 40, this.initLevel, this);
-        if (this.cg) this.cg.requestAd();
+        //if (this.cg) this.cg.requestAd();
         this.hints++;
         this.nextLevelCalled = true;
        // this.initLevel();
@@ -406,16 +405,17 @@ export class Game{
 
         this.loadingBar.visible = false;
         
-        this.initLevel(this.levelIndex);
+        this.initLevel(this.levelIndex, false);
 
         this.update();
     }
 
-    initLevel(index){
+    initLevel(index, requestAd=true){
         if (this.level){
             this.scene.remove(this.level);
             this.physics.reset();
         }
+        if (this.cg && requestAd) this.cg.requestAd();
         if (index==null) index = this.levelIndex + 1;
         const data = this.levels[index];
         this.levelIndex = index;
@@ -605,7 +605,10 @@ export class Game{
     }
 
     reset(){
-		this.level.children.forEach( pipe => { pipe.position.copy(pipe.userData.startPosition); });
+		this.level.children.forEach( pipe => { 
+            pipe.position.copy(pipe.userData.startPosition); 
+            this.physics.setMeshPosition(pipe);
+        });
 		this.sfx.play("swish");
         this.ui.moves = `0(${this.minMove})`;
         this.moveCount = 0;
@@ -973,9 +976,8 @@ export class Game{
     }
 
     resize(){
-        const bannerHeight = (this.cg) ? this.cg.bannerHeight : 0;
-        this.camera.aspect = window.innerWidth / (window.innerHeight-bannerHeight);
+        this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize( window.innerWidth, window.innerHeight-bannerHeight );
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 }
