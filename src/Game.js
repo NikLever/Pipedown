@@ -281,12 +281,14 @@ export class Game{
             pipe.userData.cell = this.posToCell(this.tmpVec3);//this.getCell(pipe);
         });
         this.inCup = false;
+        this.enableButtons( false );
     }
 
     endDrop(){
         this.stepPhysics = false;
         this.mode = this.modes.ACTIVE;
         this.interactive = true;
+        this.enableButtons( true );
         delete this.checkBall;
         this.sfx.stop("rolling");
         this.level.children.forEach( pipe => {
@@ -587,6 +589,8 @@ export class Game{
 		this.initLevelPhysics();
 		
 		this.interactive = true;
+        this.enableButtons( true );
+        
 		this.mode = this.modes.ACTIVE;
 		
 		this.moves = { count:0, min:data.minMove };
@@ -605,6 +609,7 @@ export class Game{
     }
 
     reset(){
+        if (!this.interactive) return;
 		this.level.children.forEach( pipe => { 
             pipe.position.copy(pipe.userData.startPosition); 
             this.physics.setMeshPosition(pipe);
