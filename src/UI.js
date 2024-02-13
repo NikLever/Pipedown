@@ -41,6 +41,17 @@ export class UI{
 		const btn6 = document.getElementById("zoom-out");
 		btn6.onclick = () => { this.game.zoom(false); }
 
+		const btn7 = document.getElementById("options");
+		let gif = true;
+		btn7.onclick = () => { 
+			if (gif) {
+				this.game.ui.showGif( 'great' );
+			}else{
+				this.game.ui.showMessage( 'Test' );
+			} 
+			gif = !gif;
+		}
+
 		if (this.game.levelIndex>0){
 			const btn = document.getElementById("message_close");
 			btn.style.display = "none";
@@ -83,13 +94,58 @@ export class UI{
 		txt.innerHTML = value;
     }
 
+	showGif( gif, onOK=null){
+		const txt = document.getElementById('message_text');
+		txt.style.display = 'none';
+
+		const btn = document.getElementById('message_ok');
+		const panel = document.getElementById('message');
+		panel.style.height = "320px";
+		panel.style.backgroundColor = "#2480d1";
+
+		const gifElm = document.getElementById("gif");
+		gifElm.style.display = "block";
+
+		const elm = gifElm.getElementsByTagName("img")[0];
+		elm.style.display = "none";
+		elm.style.display = "block";
+		setTimeout(() => { elm.src = `${gif}.gif` }, 100);
+
+		btn.innerHTML = 'NEXT';
+
+		const close_btn = document.getElementById("message_close");
+		close_btn.style.display = "none";
+
+		this.game.showWrench( true );
+	
+		if (onOK!=null){
+			btn.onclick = ()=>{ 
+				panel.style.display = 'none';
+				onOK.call((binder) ? binder : this); 
+			}
+		}else{
+			btn.onclick = () => {
+				panel.style.display = 'none';
+				this.game.showWrench( false );
+			}
+		}
+
+		panel.style.display = 'flex';
+	}
+
     showMessage(msg, fontSize=20, onOK=null, binder=null, close=false, ok_txt='OK'){
 		const txt = document.getElementById('message_text');
 		txt.innerHTML = msg;
 		txt.style.fontSize = fontSize + 'px';
+		txt.style.display = "block";
+
+		const gif = document.getElementById("gif");
+		gif.style.display = "none";
 
 		const btn = document.getElementById('message_ok');
 		const panel = document.getElementById('message');
+		panel.style.backgroundColor = "aliceblue";
+		panel.style.height = "inherit";
 
 		btn.innerHTML = ok_txt;
 

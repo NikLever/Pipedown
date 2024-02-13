@@ -1,6 +1,7 @@
 import {
     Clock, Raycaster, Vector3, Scene, Color, PerspectiveCamera, HemisphereLight, DirectionalLight,
-    WebGLRenderer, Vector2, Group, Mesh, SphereGeometry, PMREMGenerator, CubeTextureLoader, MeshBasicMaterial, BackSide
+    WebGLRenderer, Vector2, Group, Mesh, SphereGeometry, PMREMGenerator, CubeTextureLoader, 
+    MeshBasicMaterial, BackSide, AnimationMixer, BoxGeometry, MeshStandardMaterial, LoopOnce
 } from "three"
 import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
@@ -168,9 +169,11 @@ export class Game{
 			this.renderer.domElement.addEventListener('mousedown', (evt) => { this.tap(evt); });
 		}
 
-        this.setEnvironment();
+        //this.setEnvironment();
 
         this.loadSkybox();
+
+        this.loadWrench();
             
         this.loadGLTF();
 
@@ -326,7 +329,8 @@ export class Game{
         if (this.nextLevelCalled) return;
         this.stepPhysics = false;
         this.sfx.play("win");
-        this.ui.showMessage("Great work!", 40, this.initLevel, this);
+        const gif = (Math.random()>0.5) ? 'genius' : 'great'; 
+        this.ui.showGif( gif, this.initLevel );
         //if (this.cg) this.cg.requestAd();
         this.hints++;
         this.nextLevelCalled = true;
@@ -679,8 +683,9 @@ export class Game{
                 'ny.jpg',
                 'pz.jpg',
                 'nz.jpg'
-            ], () => {
+            ], (tex) => {
                 //this.renderer.setAnimationLoop(this.render.bind(this));
+                this.scene.environment = tex;
             }, (xhr) => {
                 this.loadingBar.update("skybox", xhr.loaded, xhr.total );
             });
@@ -838,6 +843,71 @@ export class Game{
         );
     }
 
+    loadWrench(){
+        const loader = new GLTFLoader( );
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath( 'draco-gltf/' );
+        loader.setDRACOLoader( dracoLoader );
+
+        // Load a glTF resource
+        loader.load(
+            // resource URL
+            'pipewrench.glb',
+            // called when the resource is loaded
+            gltf => {
+                //const box = new Mesh(new BoxGeometry(), new MeshStandardMaterial());
+                //gltf.scene.add(box);
+                gltf.scene.traverse( child => {
+                    if ( child.isSkinnedMesh){
+                        this.wrench = new Group();
+                        this.wrench.add(child);
+                        //this.wrench.add( new Mesh( new SphereGeometry(), new MeshStandardMaterial() ) );
+                        child.position.set(0,0,0);
+                    }
+                })
+                this.mixer = new AnimationMixer( this.wrench );
+                const action = this.mixer.clipAction( gltf.animations[0] );
+                action.loop = LoopOnce;
+                action.clampWhenFinished = true;
+                action.play();
+                this.mixer.addEventListener( 'finished', () => {
+                    this.showWrench( false );
+                });
+                const scale = 0.01;
+                this.wrench.scale.set( -scale, scale, scale);
+                this.wrench.userData.action = action;
+
+                const pos = new Vector3(-0.9, 0.3, 0).unproject(this.camera);
+                this.wrench.position.copy(pos);
+                this.wrench.rotateY(Math.PI/5);
+                this.resize();
+                this.wrench.position.x = this.wrench.userData.startX;
+
+                this.scene.add(this.camera);
+                if (this.camera) this.camera.attach(this.wrench);
+            },
+            // called while loading is progressing
+            (xhr) => { this.loadingBar.update("wrench", xhr.loaded, xhr.total ) },
+            // called when loading has errors
+            err => {
+                console.error( err.message );
+
+            }  
+        );
+    }
+
+    showWrench( mode ){
+        const target = mode ? this.wrench.userData.targetX : this.wrench.userData.startX;
+        const action = this.wrench.userData.action;
+        if (mode){
+            action.reset();
+            action.play();
+        }else if (action.isRunning()){
+            action.paused = true;
+        }
+        this.tween = new Tween(this.wrench.position, 'x', target, 0.5, () => { delete this.tween })
+    }
+
     createArrows(){
         let arrow;
 
@@ -971,6 +1041,8 @@ export class Game{
         if (this.tween) this.tween.update(dt);
 
         if (this.tutorial) this.tutorial.update(dt);
+
+        if (this.mixer) this.mixer.update(dt);
         
         this.renderer.render( this.scene, this.camera );  
     }
@@ -979,5 +1051,18 @@ export class Game{
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+        this.scene.attach(this.wrench);
+
+        const offset = (1.0 - this.camera.aspect) * -0.4;
+
+        const pos = new Vector3(-1 + offset, 0.3, 0).unproject(this.camera);
+        this.wrench.position.copy(pos);
+        this.wrench.userData.targetX = pos.x;
+
+        const pos2 = new Vector3( -1.5, 0.3, 0).unproject(this.camera);
+        this.wrench.userData.startX = pos2.x;
+
+        this.camera.attach(this.wrench);
     }
 }

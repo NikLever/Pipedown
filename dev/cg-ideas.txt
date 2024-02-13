@@ -1,0 +1,7 @@
+1. The game could use some more juice, to make things more rewarding, here's a nice video about it https://www.youtube.com/watch?v=Fy0aCDmgnxg&amp;ab_channel=grapefrukt.
+2. Something that would be super easy to do is giving players the option to change the skybox, just to give a bit of customization to the game;
+3. The UI elements look a bit crude, especially the congratulatory text at the end of a level;
+4. There could be a small Level Selection UI that allows players to repeat older levels.
+5. Zooming in on the pipes there's a reflection of a house, I'm not sure if its intentional, but I'd remove it.
+6. It would be great if pipe pieces could be moved from one side of the pipe to the other, without having to move it around the other pipes.
+7. I only reached until level 8, but I didn't see any different obstacles, it would be great to see more stuff like the Cut the Rope Series does so brilliantly
