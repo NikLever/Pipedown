@@ -144,4 +144,4 @@ box-shadow:
   10px 25px 10px hsla(0, 0%, 0%, 0.2); /* drop shadow 2 */
 } 
 /*Options*/
-#option-panel { display: block; width: 80%; position: absolute; }
+#option-panel { display: none; width: 80%; position: absolute; }

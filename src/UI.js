@@ -42,14 +42,30 @@ export class UI{
 		btn6.onclick = () => { this.game.zoom(false); }
 
 		const btn7 = document.getElementById("options");
-		let gif = true;
 		btn7.onclick = () => { 
-			if (gif) {
-				this.game.ui.showGif( 'great' );
-			}else{
-				this.game.ui.showMessage( 'Test' );
-			} 
-			gif = !gif;
+			const panel = document.getElementById("option-panel");
+			panel.style.display = "block";
+		}
+
+		const btn8 = document.getElementById("panel-ok");
+		btn8.onclick = () => { 
+			const panel = document.getElementById("option-panel");
+			panel.style.display = "none";
+		}
+
+		const btns = document.getElementById("option-panel").getElementsByClassName("tab");
+		btns[0].onclick = () => { 
+			const settings = document.getElementById("settings");
+			const levels = document.getElementById("levels");
+			settings.style.display = "block";
+			levels.style.display = "none";
+		}
+		btns[1].onclick = () => { 
+			const settings = document.getElementById("settings");
+			const levels = document.getElementById("levels");
+			this.updateLevelPanel(levels);
+			settings.style.display = "none";
+			levels.style.display = "grid";
 		}
 
 		if (this.game.levelIndex>0){
@@ -60,7 +76,34 @@ export class UI{
 		}else{
 			this.startMessages();
 		}
+
+		window.replayLevel = this.replayLevel.bind(this);
+		window.loadSkybox = this.loadSkybox.bind(this);
     }
+
+	replayLevel(index){
+		console.log(`replayLevel: ${index}`);
+	}
+
+	loadSkybox(skybox){
+		console.log(`loadSkybox: ${skybox}`);
+	}
+
+	updateLevelPanel(panel){
+		if (!panel) return;
+
+		let html = [];
+
+		for(let i=1; i<50; i++){
+			if (i<this.game.levelIndex){
+				html.push(`<div class="level"><a href="javascript:window.replayLevel(${i})">${i}</a></div>`);
+			}else{
+				html.push('<div class="level"><img src="lock.svg" /></div>')
+			}
+		}
+
+		panel.innerHTML = html.join('');
+	}
 
     startMessages(){
 		this.game.sfx.play("click");
