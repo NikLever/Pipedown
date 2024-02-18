@@ -79,7 +79,35 @@ export class UI{
 
 		window.replayLevel = this.replayLevel.bind(this);
 		window.loadSkybox = this.loadSkybox.bind(this);
+
+		const diffInp = document.getElementById("diffId");
+		
+		diffInp.onchange = (evt) => {
+			this.game.difficulty = diffInp.checked ? 1 : 0;
+		}
+
+		const musicInp = document.getElementById("musicId");
+		musicInp.onchange = (evt) => {
+			this.game.music = musicInp.checked ? 1 : 0;
+		}
+
+		this.updateSettingsPanel();
     }
+
+	updateSettingsPanel(){
+		const diffInp = document.getElementById("diffId");
+		const musicInp = document.getElementById("musicId");
+		diffInp.checked = this.game.difficulty > 0;
+		musicInp.checked = this.game.music > 0;
+		const skyboxes = ["sky", 'factory', 'forest', 'space'];
+		const skybox = this.game.skybox;
+
+		skyboxes.forEach( str => {
+			const elm = document.getElementById( `skybox-${str}` );
+			elm.classList.remove('selected-skybox');
+			if (str == skybox) elm.classList.add('selected-skybox');
+		} )
+	}
 
 	replayLevel(index){
 		console.log(`replayLevel: ${index}`);
@@ -87,6 +115,16 @@ export class UI{
 
 	loadSkybox(skybox){
 		console.log(`loadSkybox: ${skybox}`);
+		this.game.skybox = skybox;
+		const skyboxes = ["sky", 'factory', 'forest', 'space'];
+
+		skyboxes.forEach( str => {
+			const elm = document.getElementById( `skybox-${str}` );
+			elm.classList.remove('selected-skybox');
+			if (str == skybox) elm.classList.add('selected-skybox');
+		} )
+
+		this.game.loadSkybox(skybox);
 	}
 
 	updateLevelPanel(panel){
@@ -95,7 +133,7 @@ export class UI{
 		let html = [];
 
 		for(let i=1; i<50; i++){
-			if (i<this.game.levelIndex){
+			if (i<=this.game.levelIndex){
 				html.push(`<div class="level"><a href="javascript:window.replayLevel(${i})">${i}</a></div>`);
 			}else{
 				html.push('<div class="level"><img src="lock.svg" /></div>')
@@ -107,6 +145,7 @@ export class UI{
 
     startMessages(){
 		this.game.sfx.play("click");
+		this.game.tutorial.enableButtons(false);
 		//const progress = document.getElementById("message_progress");
 		if (this.messages.index<(this.messages.text.length-1)){
 			//progress.innerHTML = `${this.messages.index+1} of ${this.messages.text.length}`;
@@ -137,7 +176,7 @@ export class UI{
 		txt.innerHTML = value;
     }
 
-	showGif( gif, onOK=null){
+	showGif( gif, onOK=null, binder=null){
 		const txt = document.getElementById('message_text');
 		txt.style.display = 'none';
 
@@ -213,6 +252,8 @@ export class UI{
 		}
 
 		panel.style.display = 'flex';
+
+		this.game.showWrench( true );
 	}
 
 }

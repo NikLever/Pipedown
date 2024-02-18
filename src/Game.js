@@ -19,8 +19,6 @@ export class Game{
     constructor(){
         this.loadingBar = new LoadingBar({ color: "#004", opacity: 1, logo: "nik-logo.png" });
 
-        this.init();
-
         this.clock = new Clock();
 
         this.raycaster = new Raycaster();
@@ -43,6 +41,9 @@ export class Game{
         this.score = 0;
         this.levelIndex = 0;
         this._hints = 10;
+        this._difficulty = 1;
+        this._skybox = "sky";
+        this._music = 0;
 
         if ( localStorage ){
             const cleared = localStorage.getItem('cleared5') | 0;
@@ -53,6 +54,9 @@ export class Game{
                 localStorage.setItem("hints", 10);
                 localStorage.removeItem("cleared4");
                 localStorage.setItem("cleared5", 1);
+                localStorage.setItem("difficulty", 1);
+                localStorage.setItem("skybox", "sky");
+                localStorage.setItem("music", 0);
             }
 
             const score = Number(localStorage.getItem( "score" ));
@@ -62,7 +66,17 @@ export class Game{
             if (score != null) this.score = score;
             if (levelIndex != null) this.levelIndex = levelIndex;
             if (hints != null) this._hints = hints;
+
+            const difficulty = Number(localStorage.getItem("difficulty"));
+            const skybox = localStorage.getItem("skybox");
+            const music = Number(localStorage.getItem("music"));
+
+            if (difficulty != null) this.difficulty = difficulty;
+            if (skybox != null) this.skybox = skybox;
+            if (music != null) this.music = music;
         }
+
+        this.init();
 
         this.loadSounds();
 
@@ -74,13 +88,49 @@ export class Game{
         }
 
         this.buttons = [];
-        const btns = ['zoom-in', 'zoom-out', 'reset', 'drop', 'hint'];
+        const btns = ['zoom-in', 'zoom-out', 'reset', 'drop', 'hint', 'options'];
 
         btns.forEach( name => {
             const btn = document.getElementById(name);
             this.buttons.push(btn);
         });
 
+    }
+
+    get difficulty(){
+        return this._difficulty;
+    }
+
+    set difficulty(value){
+        localStorage.setItem("difficulty", value);
+        this._difficulty = value;
+        const scoreElm = document.getElementById("score");
+        const movesElm = document.getElementById("moves");
+        if (value){
+            scoreElm.style.display = "block";
+            movesElm.style.display = "block";
+        }else{
+            scoreElm.style.display = "none";
+            movesElm.style.display = "none";
+        }
+    }
+
+    get skybox(){
+        return this._skybox;
+    }
+
+    set skybox(value){
+        localStorage.setItem("skybox", value);
+        this._skybox = value;
+    }
+
+    get music(){
+        return this._music;
+    }
+
+    set music(value){
+        localStorage.setItem("music", value);
+        this._music = value;
     }
 
     enableButtons(mode){
@@ -171,7 +221,7 @@ export class Game{
 
         //this.setEnvironment();
 
-        this.loadSkybox();
+        this.loadSkybox(this.skybox);
 
         this.loadWrench();
             
@@ -311,11 +361,15 @@ export class Game{
             }
         });
 
+        if (this.difficulty==0) result = true;
+
         if (result){
-            const bonus = Math.max((5-(this.minMove-this.moveCount)) * 10, 0);
-            this.score += this.levelIndex + bonus;
-            if (localStorage) localStorage.setItem("score", this.score);
-            this.ui.score = this.score;
+            if (this.difficulty && !this.replay){
+                const bonus = Math.max((5-(this.minMove-this.moveCount)) * 10, 0);
+                this.score += this.levelIndex + bonus;
+                if (localStorage) localStorage.setItem("score", this.score);
+                this.ui.score = this.score;
+            }
             this.nextLevel();
             if (this.tutorial){
                 this.tutorial.end();
@@ -332,7 +386,7 @@ export class Game{
         this.stepPhysics = false;
         this.sfx.play("win");
         const gif = (Math.random()>0.5) ? 'genius' : 'great'; 
-        this.ui.showGif( gif, this.initLevel );
+        this.ui.showGif( gif, this.initLevel, this );
         //if (this.cg) this.cg.requestAd();
         this.hints++;
         this.nextLevelCalled = true;
@@ -678,22 +732,50 @@ export class Game{
 		if (this.selected!=undefined) this.arrows.visible = true;
 	}
 
-    loadSkybox(){
-        this.scene.background = new CubeTextureLoader()
-	        .setPath( './paintedsky/' )
-            .load( [
-                'px.jpg',
-                'nx.jpg',
-                'py.jpg',
-                'ny.jpg',
-                'pz.jpg',
-                'nz.jpg'
-            ], (tex) => {
-                //this.renderer.setAnimationLoop(this.render.bind(this));
-                this.scene.environment = tex;
-            }, (xhr) => {
-                this.loadingBar.update("skybox", xhr.loaded, xhr.total );
-            });
+    loadSkybox( skybox ){
+
+        if (this.scene.environment) this.scene.environment.dispose();
+
+        if (skybox == 'sky'){
+            this.scene.background = new CubeTextureLoader()
+                .setPath( './paintedsky/' )
+                .load( [
+                    'px.jpg',
+                    'nx.jpg',
+                    'py.jpg',
+                    'ny.jpg',
+                    'pz.jpg',
+                    'nz.jpg'
+                ], (tex) => {
+                    //this.renderer.setAnimationLoop(this.render.bind(this));
+                    this.scene.environment = tex;
+                }, (xhr) => {
+                    this.loadingBar.update("skybox", xhr.loaded, xhr.total );
+                });
+        }else{
+            const loader = new RGBELoader();
+            const pmremGenerator = new PMREMGenerator( this.renderer );
+            pmremGenerator.compileEquirectangularShader();
+            
+            loader.load( `${skybox}.hdr`, ( texture ) => {
+                const envMap = pmremGenerator.fromEquirectangular( texture ).texture;
+                pmremGenerator.dispose();
+    
+                this.scene.environment = envMap;
+                this.scene.background = envMap;
+            }, (xhr) => this.loadingBar.update("skybox", xhr.loaded, xhr.total ), (err)=>{
+                console.error( 'An error occurred setting the skybox.' + err.message );
+            } );
+        }
+
+        const cols = { sky: '#3D455C', forest: '#000', factory: '#000', space: '#fff' };
+        const col = cols[skybox];
+
+        const elms = ['level', 'moves', 'score' ];
+        elms.forEach( str => {
+            const elm = document.getElementById(str);
+            elm.style.color = col;
+        })
     }
 
     initLevelPhysics(){
@@ -1048,6 +1130,8 @@ export class Game{
         if (this.tutorial) this.tutorial.update(dt);
 
         if (this.mixer) this.mixer.update(dt);
+
+        if (this.levelIndex==0 && this.tutorial && !this.tutorial.active) this.tutorial.enableButtons( false );
         
         this.renderer.render( this.scene, this.camera );  
     }

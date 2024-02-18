@@ -8,110 +8,7 @@
   <link href="styles.css" rel="stylesheet">
   <title>Pipedown</title>
   <style>
-.panel {
-    position: absolute; left: 50%; top: 50%; width: 80%; max-width: 320px; 
-    height: 80%; max-height: 400px; transform: translate(-50%, -50%);
-    border: medium solid #3D455C; border-radius: 20px; z-index: 99; background-color:#8099e6;
-	font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; color: #fff; margin: 15px;
-}
-
-.header {
-	position: absolute; top: 0; height: 40px; width: 100%;
-}
-
-.footer{
-	position: absolute; bottom: 0; height: 60px; width: 100%; display: flex; justify-content: center;
-}
-
-.content{
-	position: absolute; top: 40px; width: 100%;
-}
-
-table{
-	width: 100%;
-	border-spacing: 0;
-}
-
-#settings td{
-	padding: 7px;
-	background-color: #1c3684;
-	text-transform: uppercase; 
-	height: 29px;
-}
-
-#settings tr:nth-child(n+2):nth-child(-n+5) td:nth-child(2):hover {
-	background-color: #52649b;
-}
-
-#settings tr:nth-child(n+2):nth-child(-n+5) td:nth-child(2) {
-	color: white;
-	background-color: #37509b;
-}
-
-#settings img{ height: 34px; }
-
-#settings td:nth-child(1) {  
-	font-size: 14px; 
-	background-color: #189b65;
-}
-
-#settings td:nth-child(2){
-	font-size: 12px; font-weight: normal; color: gray;
-	vertical-align: middle; height: 100%;
-}
-
-.simplebtn{
-	font-size: 18px; font-family: sans-serif; font-weight: bold; line-height: 30px; color: white;
-	padding: 15px; background-color: transparent; border: none; vertical-align: middle;
-}
-
-.simplebtn:hover {
-	transform: scale(1.1);
-}
-
-.tab{
-	font-size: 16px; font-family: sans-serif; font-weight: bold; line-height: 20px; color: white;
-	margin: 9px 0 0 0; padding: 10px 10px; border: none; vertical-align: middle; 
-	border-radius: 10px; text-transform: uppercase; background-color: rgb(56, 84, 196);
-}
-
-.tab:hover {
-	font-size: 18px; 
-}
-
-.tab:nth-child(1){
-	margin: 9px 0 0 10px;
-	background-color: #189b65;
-}
-
-#levels {
-	display: grid;
-	grid-template-columns: repeat(7, 1fr);
-	grid-template-rows: repeat(7, 1fr);
-	grid-column-gap: 0px;
-	grid-row-gap: 0px;
-	background-color: rgb(56, 84, 196);
-}
-
-.level{
-	padding: 6px;
-	font-size: 20px; font-family: sans-serif;
-	text-align: center;
-	height: 31px;
-}
-
-.level img{
-  width: 60%;
-}
-
-.level a{
-	color: aliceblue;
-}
-
-.level a:hover{
-	color:rgb(66, 157, 200);
-}
-
+	
   </style>
   <script type="importmap">
     {
@@ -150,15 +47,15 @@ table{
 		<div id="settings" class="content">
 			<table>
 				<tr><td>Difficulty</td><td style="line-height: 30px;">Easy&nbsp;&nbsp;<label class="switch">
-					<input type="checkbox" checked>
+					<input id="diffId" type="checkbox" checked>
 					<span class="slider round"></span>
 				  </label>&nbsp;&nbsp;Hard</td></tr>
-				<tr><td>Skybox</td><td onclick="window.loadSkybox('sky')" style="background-color: #5d75be; pointer-events: none;"><img src="sky-thumb.jpg" /> Blue sky</td></tr>
-				<tr><td></td><td onclick="window.loadSkybox('factory')"><img src="factory-thumb.jpg" /> Factory </td></tr>
-				<tr><td></td><td onclick="window.loadSkybox('forest')"><img src="forest-thumb.jpg" /> Forest</td></tr>
-				<tr><td></td><td onclick="window.loadSkybox('space')"><img src="space-thumb.jpg" /> Space</td></tr>
+				<tr><td>Skybox</td><td id="skybox-sky" onclick="window.loadSkybox('sky')"><img src="sky-thumb.jpg" /> Blue sky</td></tr>
+				<tr><td></td><td  id="skybox-factory" onclick="window.loadSkybox('factory')"><img src="factory-thumb.jpg" /> Factory </td></tr>
+				<tr><td></td><td  id="skybox-forest" onclick="window.loadSkybox('forest')"><img src="forest-thumb.jpg" /> Forest</td></tr>
+				<tr><td></td><td  id="skybox-space" onclick="window.loadSkybox('space')"><img src="space-thumb.jpg" /> Space</td></tr>
 				<tr><td>Music</td><td style="line-height: 30px;">Off&nbsp;&nbsp; <label class="switch">
-					<input type="checkbox">
+					<input id="musicId" type="checkbox">
 					<span class="slider round"></span>
 				  </label>&nbsp;&nbsp;On</td></tr>
 			</table>

@@ -20,7 +20,7 @@ export class Tutorial{
         this.active = false;
 
         this.buttons = [];
-        const btns = ['zoom-in', 'zoom-out', 'reset', 'drop', 'hint'];
+        const btns = ['zoom-in', 'zoom-out', 'reset', 'drop', 'hint', 'options'];
 
         btns.forEach( name => {
             const btn = document.getElementById(name);
@@ -33,6 +33,7 @@ export class Tutorial{
     start(){
         this.step = -1;
         this.nextStep();
+        this.active = true;
     }
 
     nextStep(){
@@ -40,6 +41,7 @@ export class Tutorial{
         this.txt.style.display = "block";
         this.txt.innerHTML = this.messages[this.step];
         this.setupStep = true;
+        this.game.showWrench( true )
     }
 
     enableButtons(mode, excludes){
@@ -53,9 +55,11 @@ export class Tutorial{
             if (mode || exclude){
                 btn.disabled = false;
                 btn.style.opacity = 1;
+                btn.style.pointerEvents = 'auto';
             }else{
                 btn.disabled = true;
                 btn.style.opacity = 0.5;
+                btn.style.pointerEvents = 'none';
             }
         })
         
@@ -64,6 +68,7 @@ export class Tutorial{
     end(){
         this.enableButtons(true);
         this.txt.style.display = 'none';
+        this.active = false;
     }
 
     setArrow( bottom, display){
@@ -90,7 +95,7 @@ export class Tutorial{
                 circle1.style.display = "block";
                 const circle2 = document.getElementById("zoom-in").getElementsByClassName("circle")[0];
                 circle2.style.display = "block";
-                this.setArrow( '200px', 'block');
+                this.setArrow( '260px', 'block');
                 this.enableButtons(false, ['zoom-in', 'zoom-out']);
                 this.camZ = this.game.camera.position.z;
                 this.game.controls.removeEventListener("end", step1Listener);
