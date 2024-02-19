@@ -40,6 +40,7 @@ export class Game{
 
         this.score = 0;
         this.levelIndex = 0;
+        this._levelsCompleted = 0;
         this._hints = 10;
         this._difficulty = 1;
         this._skybox = "sky";
@@ -51,6 +52,7 @@ export class Game{
             if (!cleared){
                 localStorage.setItem("score", 0);
                 localStorage.setItem("levelIndex", 0);
+                localStorage.setItem("levelsCompleted", 0);
                 localStorage.setItem("hints", 10);
                 localStorage.removeItem("cleared4");
                 localStorage.setItem("cleared5", 1);
@@ -61,10 +63,16 @@ export class Game{
 
             const score = Number(localStorage.getItem( "score" ));
             const levelIndex = Number(localStorage.getItem("levelIndex"));
+            const levelsCompleted = Number(localStorage.getItem("levelsCompleted"));
             let hints = Number(localStorage.getItem("hints"));
 
             if (score != null) this.score = score;
             if (levelIndex != null) this.levelIndex = levelIndex;
+            if (levelsCompleted != null){
+                this.levelsCompleted = levelsCompleted;
+            }else if (levelIndex){
+                this.levelsCompleted = levelIndex;
+            }
             if (hints != null) this._hints = hints;
 
             const difficulty = Number(localStorage.getItem("difficulty"));
@@ -79,6 +87,10 @@ export class Game{
         this.init();
 
         this.loadSounds();
+
+        setTimeout( () => {
+            if (this.music) this.sfx.play("music");
+        }, 2000);
 
         this.cg = new CGHandler(this);
 
@@ -131,6 +143,22 @@ export class Game{
     set music(value){
         localStorage.setItem("music", value);
         this._music = value;
+        if (this.sfx){
+            if (value){
+                this.sfx.play("music");
+            }else{
+                this.sfx.pause("music");
+            }
+        }
+    }
+
+    get levelsCompleted(){
+        return this._levelsCompleted;
+    }
+
+    set levelsCompleted(value){
+        localStorage.setItem("levelsCompleted", value);
+        this._levelsCompleted = value;
     }
 
     enableButtons(mode){
@@ -154,13 +182,14 @@ export class Game{
             'light',
             'rolling',
             'swish',
-            'win'
+            'win',
+            'music'
         ]
 
         this.sfx = new SFX(this.camera, "./sfx/");
 
         snds.forEach( snd => {
-            this.sfx.load(snd, snd=="rolling");
+            this.sfx.load(snd, snd=="rolling"||snd=="music");
         })
     }
 
@@ -364,12 +393,15 @@ export class Game{
         if (this.difficulty==0) result = true;
 
         if (result){
-            if (this.difficulty && !this.replay){
+            const replay = this.levelIndex < this.levelsCompleted;
+            if (this.difficulty && !replay){
                 const bonus = Math.max((5-(this.minMove-this.moveCount)) * 10, 0);
                 this.score += this.levelIndex + bonus;
                 if (localStorage) localStorage.setItem("score", this.score);
                 this.ui.score = this.score;
             }
+            if (!replay) this.levelsCompleted++;
+
             this.nextLevel();
             if (this.tutorial){
                 this.tutorial.end();

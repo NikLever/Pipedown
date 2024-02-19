@@ -1,0 +1,255 @@
+body{ padding: 0; margin: 0; overflow: hidden; color: #3D455C; }
+canvas{ position: fixed; top: 0; left: 0; }
+#info { color: #fff; position: absolute; top: 10px; width: 100%; text-align: center; z-index: 100; display:block; }
+#info a { color: #046; font-weight: bold; }
+#level{ position: fixed; display: block; width: 80px; top: 0; left: 15px; padding: 0; margin: 0; text-align: center;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; z-index: 100; pointer-events: none; }
+#level p, #score p, #moves p{ width: 100%; margin: 0; padding: 0; }
+#score{ position: fixed; display: block; width: 140px; top: 0; right: 15px; padding: 0; margin: 0; text-align: center;
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; z-index: 100; pointer-events: none; }
+#moves{ position: fixed; display: block; width: 100px; bottom: 0; left: 15px; padding: 0; margin: 0;
+    text-align: center; font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; z-index: 100; pointer-events: none; }
+.ui-text{ font-family: 'IBM Plex Sans', sans-serif; font-size: 55px; line-height: 55px; }
+#message{ position:absolute; left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%);
+    font-family: 'Kavivanar', san-serif; font-size: 40px; width:80%; max-width:280px; padding: 15px 15px 50px 15px;
+    text-align: center; display:none; flex-wrap: wrap; align-content: center; justify-content: center;
+    background-color: aliceblue; border: medium solid #3D455C; border-radius: 20px; color: #3D455C; z-index: 99; }
+#message_ok{ position: absolute; bottom: 10px; }
+#gif{ position: absolute; width: 320px; height: 320px; left: 0px; top: 0px; }
+#gif img{ width: 100%; height: 100%; }
+#message_close{ display: none; border: none; margin-left: auto; background-color: transparent; font-size: 30px; }
+#message_progress{ display: none; font-size: 15px; }
+#tutorial_txt{ display: none; position:absolute; left: 50%; top: 10px; transform: translateX(-50%);
+    font-family: 'Kavivanar', san-serif; font-size: 25px; width:80%; padding: 15px;
+    text-align: center; display:none; flex-wrap: wrap; align-content: center; justify-content: center;
+    background-color: aliceblue; border: medium solid #3D455C; border-radius: 20px; color: #3D455C; z-index: 100;}
+/*.txtbtn{padding: 10px 20px 10px 20px; font-family: sans-serif; font-size: 20px; 
+        background-color: #3D455C; width: 140px; color: #fff; border-radius: 8px; 
+        border: medium solid #696882; z-index: 99; }*/
+.txtbtn{ width: 140px; height: 50px; z-index: 99; }
+#hint{ position: absolute; bottom: 10px; right: 10px; animation-duration: 3s; animation-iteration-count: infinite; }
+#drop{ position: absolute; bottom: 70px; right: 10px; animation-duration: 3s; animation-iteration-count: infinite; }
+#reset{ position: absolute; bottom: 130px; right: 10px; }
+#options{ position: absolute; bottom: 190px; right: 10px; }
+.svgbtn{border: none; background-color: transparent; z-index: 99; width: 48px; height: 48px; }
+#zoom-in{ position: absolute; background-image: url( './zoom-in.svg' ); bottom: 260px; right: 90px; }
+#zoom-out{ position: absolute; background-image: url( './zoom-out.svg' ); bottom: 260px; right: 40px; }
+#logo{ position: absolute; left: 50%; top: 50%; width:70%; transform: translate( -50%, -50% ); z-index: 101;
+    transition-property: top; transition-duration: 1s; transition-timing-function: ease-in; transition-delay: 2s;}
+#logo img { width: 100%; object-fit: contain; }	
+#courses{ display: none; position: absolute; left: 50%; top: 30px; text-decoration: none; transform: translateX(-50%);
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; z-index: 99; color: #046; }
+a:link { text-decoration: none; } 
+a:visited { text-decoration: none; } 
+a:hover { text-decoration: none; color: black; } 
+a:active { text-decoration: none; }
+#banner-container { width: 100%; height: 50px; background-color: #3D455C; }
+.filter-grey { filter: invert(30%) sepia(0%) saturate(3082%) hue-rotate(344deg) brightness(100%) contrast(86%); }
+.filter-blue { filter: invert(44%) sepia(91%) saturate(2012%) hue-rotate(163deg) brightness(97%) contrast(101%); }
+.filter-black { filter: invert(0%) sepia(99%) saturate(9%) hue-rotate(21deg) brightness(102%) contrast(101%); }
+#hand { display: none; pointer-events: none; position: absolute; top: 50%; right: 0%; width: 20%; z-index: 120; animation-name: pan; animation-duration: 3s; animation-iteration-count: infinite; }
+#arrow { display: none; position: absolute; bottom: 200px; right: 150px; width: 15%; z-index: 120; animation-name: point; animation-duration: 1.5s; animation-iteration-count: infinite; }
+.circle { display: none; border-radius: 25px; border:#009fb7 solid 5px; width: 50px; height: 50px; margin: -5px 0px 5px -15px; animation-name: flash2; animation-duration: 3s; animation-iteration-count: infinite;}
+@keyframes pan {
+    0%   {right: 0%;}
+    50%  {right: 20%;}
+    100% {right: 0%;}
+}
+
+@keyframes point {
+    0%   {right: 150px;}
+    50%  {right: 170px;}
+    100% {right: 150px;}
+}
+
+@keyframes flash {
+    0%   {background-color: #19F;}
+    50%  {background-color: #009fb7;}
+    100% {background-color: #19F}
+}
+
+@keyframes flash2 {
+    0%   {opacity: 0;}
+    50%  {opacity: 1;}
+    100% {opacity: 0;}
+}
+/*slider switch*/
+.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+/* Hide default HTML checkbox */
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #999; transition: .4s; }
+.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; }
+input:checked + .slider { background-color: #2196F3; }
+input:focus + .slider { box-shadow: 0 0 1px #2196F3; border: none; outline: none; }
+input:checked + .slider:before { transform: translateX(26px); }
+.slider.round { border-radius: 6px; }
+.slider.round:before { border-radius: 4px; }
+/* Glossy button */
+.glossy-button {
+display: inline-block;
+position: relative;
+background-color: #AAA;
+background-image: linear-gradient( /* chrome */
+  hsla(0, 0%, 100%, 0.6), hsla(0, 0%, 100%, 0) 50%,
+  hsla(0, 0%, 0%, 0.3) 50%, hsla(0, 0%, 100%, 0.2)
+);
+font-size: 18px;
+font-family: sans-serif;
+font-weight: bold;
+line-height: 12px;
+color: white;
+padding: 20px 20px;
+text-shadow:
+  0 0 15px hsla(0, 0%, 100%, 1), /* bloom */
+  0 2px 4px hsla(0, 0%, 0%, 0.7); /* drop shadow */
+border: none;
+border-radius: 50px;
+margin: 10px;
+box-shadow:
+  inset 0 -5px 20px hsla(0, 0%, 0%, 0.4), /* top light */
+  inset 0 5px 20px hsla(0, 0%, 100%, 0.4), /* bottom shadow */
+  /* multiple light sources yall */
+  -8px 8px 5px hsla(0, 0%, 0%, 0.15), /* drop shadow 1 */
+  5px 18px 10px hsla(0, 0%, 0%, 0.2); /* drop shadow 2 */
+cursor: pointer;
+transition: transform 0.1s, box-shadow 0.1s;
+}
+
+/* highlight */
+.glossy-button:before {
+content: '';
+display: block;
+position: absolute;
+left: 20px;
+right: 20px;
+top: 5px;
+height: 30px;
+border-radius: 15px;
+background: linear-gradient(
+  hsla(0, 0%, 100%, 0.8), hsla(0, 0%, 100%, 0) );
+}
+
+.glossy-button--blue { background-color: #19F; }
+.glossy-button--gold { background-color: #EA0; }
+.glossy-button--green { background-color: #6C6; }
+.glossy-button--red { background-color: #E21; }
+
+.glossy-button:hover {
+transform: scale(1.05);
+box-shadow:
+  inset 0 -5px 20px hsla(0, 0%, 0%, 0.4), /* top light */
+  inset 0 5px 20px hsla(0, 0%, 100%, 0.4), /* bottom shadow */
+  /* multiple light sources yall */
+  -12px 12px 5px hsla(0, 0%, 0%, 0.15), /* drop shadow 1 */
+  10px 25px 10px hsla(0, 0%, 0%, 0.2); /* drop shadow 2 */
+} 
+/*Options*/
+#option-panel { display: none; width: 80%; position: absolute; }
+
+.panel {
+    position: absolute; left: 50%; top: 50%; width: 80%; max-width: 320px; 
+    height: 80%; max-height: 400px; transform: translate(-50%, -50%);
+    border: medium solid #3D455C; border-radius: 20px; z-index: 99; background-color:#8099e6;
+	font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; color: #fff; margin: 15px;
+}
+
+.header {
+	position: absolute; top: 0; height: 40px; width: 100%;
+}
+
+.footer{
+	position: absolute; bottom: 0; height: 60px; width: 100%; display: flex; justify-content: center;
+}
+
+.content{
+	position: absolute; top: 40px; width: 100%;
+}
+
+table{
+	width: 100%;
+	border-spacing: 0;
+}
+
+#settings td{
+	padding: 7px;
+	background-color: #1c3684;
+	text-transform: uppercase; 
+	height: 29px;
+}
+
+#settings tr:nth-child(n+2):nth-child(-n+5) td:nth-child(2):hover {
+	background-color: #52649b;
+}
+
+#settings tr:nth-child(n+2):nth-child(-n+5) td:nth-child(2) {
+	color: white;
+	background-color: #37509b;
+}
+
+#settings img{ height: 34px; }
+
+#settings td:nth-child(1) {  
+	font-size: 14px; 
+	background-color: #189b65;
+}
+
+#settings td:nth-child(2){
+	font-size: 12px; font-weight: normal; color: gray;
+	vertical-align: middle; height: 100%;
+}
+
+.simplebtn{
+	font-size: 18px; font-family: sans-serif; font-weight: bold; line-height: 30px; color: white;
+	padding: 15px; background-color: transparent; border: none; vertical-align: middle;
+}
+
+.simplebtn:hover {
+	transform: scale(1.1);
+}
+
+.tab{
+	font-size: 16px; font-family: sans-serif; font-weight: bold; line-height: 20px; color: white;
+	margin: 9px 0 0 0; padding: 10px 10px; border: none; vertical-align: middle; 
+	border-radius: 10px; text-transform: uppercase; background-color: rgb(56, 84, 196);
+}
+
+.tab:hover {
+	font-size: 18px; 
+}
+
+.tab:nth-child(1){
+	margin: 9px 0 0 10px;
+	background-color: #189b65;
+}
+
+#levels {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-template-rows: repeat(7, 1fr);
+	grid-column-gap: 0px;
+	grid-row-gap: 0px;
+	background-color: rgb(56, 84, 196);
+}
+
+.level{
+	padding: 6px;
+	font-size: 20px; font-family: sans-serif;
+	text-align: center;
+	height: 31px;
+}
+
+.level img{
+  width: 60%;
+}
+
+.level a{
+	color: aliceblue;
+}
+
+.level a:hover{
+	color:rgb(66, 157, 200);
+}
+
+.selected-skybox{
+    background-color: #5d75be !important; pointer-events: none;
+}

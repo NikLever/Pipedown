@@ -111,6 +111,9 @@ export class UI{
 
 	replayLevel(index){
 		console.log(`replayLevel: ${index}`);
+		this.game.initLevel(index);
+		const panel = document.getElementById('option-panel');
+		panel.style.display = 'none';
 	}
 
 	loadSkybox(skybox){
@@ -204,6 +207,7 @@ export class UI{
 			btn.onclick = ()=>{ 
 				panel.style.display = 'none';
 				onOK.call((binder) ? binder : this); 
+				this.game.showWrench( false );
 			}
 		}else{
 			btn.onclick = () => {
