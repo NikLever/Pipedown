@@ -44,6 +44,8 @@ export class UI{
 		const btn7 = document.getElementById("options");
 		btn7.onclick = () => { 
 			const panel = document.getElementById("option-panel");
+			const levels = document.getElementById("levels");
+			this.updateLevelPanel(levels);
 			panel.style.display = "block";
 		}
 
@@ -84,6 +86,11 @@ export class UI{
 		
 		diffInp.onchange = (evt) => {
 			this.game.difficulty = diffInp.checked ? 1 : 0;
+			if (this.game.difficulty){
+				this.showMessage("In Hard mode you must use all pipes to complete the level. Fewer moves - higher score.")
+			}else{
+				this.showMessage("In Easy mode any way you can get the ball to the crate is OK. There is no scoring for Easy mode");
+			}
 		}
 
 		const musicInp = document.getElementById("musicId");

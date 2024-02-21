@@ -84,6 +84,7 @@ export class Game{
             if (music != null) this.music = music;
         }
 
+        //this.hints = 0;
         this.init();
 
         this.loadSounds();
