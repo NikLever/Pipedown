@@ -15,7 +15,7 @@ class LoadingBar{
 		this.domElement.style.zIndex = '1111';
 		if (options && options.logo){
 			const logo = document.createElement("div");
-			logo.style.width = '10%';
+			logo.style.width = '40%';
 			logo.innerHTML = `<img src="${options.logo}" style="width: 100%; " />`;
 			this.domElement.appendChild(logo);
 		}

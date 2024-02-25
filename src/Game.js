@@ -12,12 +12,13 @@ import { Tween } from "./Toon3D"
 import { SFX } from "./SFX"
 import { UI } from "./UI"
 import { LoadingBar } from "./LoadingBar"
-import { CGHandler } from "./CGHandler"
+import { CMGHandler } from "./CMGHandler"
 import { Tutorial } from "./Tutorial"
 
 export class Game{
     constructor(){
-        this.loadingBar = new LoadingBar({ color: "#004", opacity: 1, logo: "nik-logo.png" });
+        const logo = (window.innerHeight>window.innerWidth) ? "CMG-portrait.png" : "CMG-landscape.png";
+        this.loadingBar = new LoadingBar({ color: "#242424", opacity: 1, logo});
 
         this.clock = new Clock();
 
@@ -93,7 +94,7 @@ export class Game{
             if (this.music) this.sfx.play("music");
         }, 2000);
 
-        this.cg = new CGHandler(this);
+        this.cmg = new CMGHandler(this);
 
         if (this.levelIndex==0){
             this.tutorial = new Tutorial(this);
@@ -200,7 +201,7 @@ export class Game{
     }
 
     buyHints(){
-		if (this.cg) this.cg.requestAd("rewarded");
+		if (this.cmg) this.cmg.requestAd("rewarded");
     }
 
     set hints(value){
@@ -508,8 +509,11 @@ export class Game{
             this.scene.remove(this.level);
             this.physics.reset();
         }
-        if (this.cg && requestAd) this.cg.requestAd();
         if (index==null) index = this.levelIndex + 1;
+        if (this.cmg && requestAd){
+            this.cmg.gameEvent("start", index)
+            this.cmg.requestAd();
+        }
         const data = this.levels[index];
         this.levelIndex = index;
         if (localStorage) localStorage.setItem("levelIndex", index);
@@ -713,7 +717,10 @@ export class Game{
 		    delete this.selected;
         }
 		this.arrows.visible = false;
-        if (this.cg) this.cg.requestAd();
+        if (this.cmg){
+            this.cmg.gameEvent("replay", this.levelIndex);
+            this.cmg.requestAd();
+        }
 	}
 
     showHint(){
@@ -1097,7 +1104,7 @@ export class Game{
     ballInsidePipe(pipe){
         pipe.getWorldPosition(this.tmpVec3);
         const dist = this.bits.ball.position.distanceTo(this.tmpVec3);
-        console.log(`Game.ballInsidePipe cell=${pipe.userData.cell.x}, ${pipe.userData.cell.y}, ${pipe.userData.cell.z} dist=${dist.toFixed(2)}`);
+       // console.log(`Game.ballInsidePipe cell=${pipe.userData.cell.x}, ${pipe.userData.cell.y}, ${pipe.userData.cell.z} dist=${dist.toFixed(2)}`);
         return dist<0.6;
     }
 
