@@ -31,7 +31,7 @@ export class CMGHandler{
     }
 
     gameEvent( event, level ){
-        if (parent && parent.cmgGameEvent ) cmgGameEvent( event, String(level) );
+        if (parent && parent.cmgGameEvent ) parent.cmgGameEvent( event, String(level) );
     }
 
     requestAd(rewarded=false){
