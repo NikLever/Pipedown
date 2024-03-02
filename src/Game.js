@@ -13,12 +13,17 @@ import { SFX } from "./SFX"
 import { UI } from "./UI"
 import { LoadingBar } from "./LoadingBar"
 import { CMGHandler } from "./CMGHandler"
+import { CGHandler } from "./CGHandler"
 import { Tutorial } from "./Tutorial"
 
 export class Game{
-    constructor(){
-        const logo = (window.innerHeight>window.innerWidth) ? "CMG-portrait.png" : "CMG-landscape.png";
-        this.loadingBar = new LoadingBar({ color: "#242424", opacity: 1, logo});
+    constructor(platform=""){
+        if (platform=="cmg"){
+            const logo = (window.innerHeight>window.innerWidth) ? "CMG-portrait.png" : "CMG-landscape.png";
+            this.loadingBar = new LoadingBar({ color: "#242424", opacity: 1, logo});
+        }else{
+            this.loadingBar = new LoadingBar({ color: "#004", opacity: 1, logo: "nik-logo.png", logoWidth: "15%" });
+        }
 
         this.clock = new Clock();
 
@@ -94,7 +99,14 @@ export class Game{
             if (this.music) this.sfx.play("music");
         }, 2000);
 
-        this.cmg = new CMGHandler(this);
+        switch(platform){
+            case "cmg":
+                this.cmg = new CMGHandler(this);
+                break;
+            case "cg":
+                this.cg = new CGHandler(this);
+                break;
+        }
 
         if (this.levelIndex==0){
             this.tutorial = new Tutorial(this);
@@ -197,11 +209,12 @@ export class Game{
 
     addHints( value ){
         this.hints += value;
-        this.ui.showMessage("You've been rewarded 5 extra hints");
+        this.ui.showMessage(`You've been rewarded ${value} extra hints`);
     }
 
     buyHints(){
 		if (this.cmg) this.cmg.requestAd("rewarded");
+        if (this.cg) this.cg.requestAd("rewarded");
     }
 
     set hints(value){
@@ -510,13 +523,24 @@ export class Game{
             this.physics.reset();
         }
         if (index==null) index = this.levelIndex + 1;
-        if (this.cmg && requestAd){
-            this.cmg.gameEvent("start", index)
-            this.cmg.requestAd();
+        if (requestAd){
+            if (this.cmg){
+                this.cmg.gameEvent("start", index)
+                this.cmg.requestAd();
+            }else if (this.cg){
+                this.cg.requestAd();
+            }
         }
         const data = this.levels[index];
-        this.levelIndex = index;
-        if (localStorage) localStorage.setItem("levelIndex", index);
+
+        if (index >= this.levelIndex){
+            this.levelIndex = index;
+            if (localStorage) localStorage.setItem("levelIndex", index);
+        }
+
+        if (index == 3){
+            this.ui.showMessage("Too difficult? Select Options and change to Easy mode!");
+        }
 
         const level = new Group();
 		level.name = "Level";
@@ -720,6 +744,8 @@ export class Game{
         if (this.cmg){
             this.cmg.gameEvent("replay", this.levelIndex);
             this.cmg.requestAd();
+        }else if (this.cg){
+            this.cg.requestAd();
         }
 	}
 
