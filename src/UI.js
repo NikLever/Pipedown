@@ -116,6 +116,16 @@ export class UI{
 		} )
 	}
 
+	hide(){
+		document.getElementById("level").style.display = "none";
+		document.getElementById("score").style.display = "none";
+		document.getElementById("moves").style.display = "none";
+        const btns = ['zoom-in', 'zoom-out', 'reset', 'drop', 'hint', 'options'];
+		btns.forEach( name => {
+			document.getElementById( name ).style.display = "none";
+		});
+	}
+
 	replayLevel(index){
 		console.log(`replayLevel: ${index}`);
 		this.game.initLevel(index);
@@ -143,7 +153,7 @@ export class UI{
 		let html = [];
 
 		for(let i=1; i<50; i++){
-			if (i<=this.game.levelIndex){
+			if (i<=this.game.levelsCompleted){
 				html.push(`<div class="level"><a href="javascript:window.replayLevel(${i})">${i}</a></div>`);
 			}else{
 				html.push('<div class="level"><img src="lock.svg" /></div>')

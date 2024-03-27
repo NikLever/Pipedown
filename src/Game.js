@@ -121,6 +121,14 @@ export class Game{
             this.buttons.push(btn);
         });
 
+        //this._levelsCompleted = 50;
+        //this.debug = true;
+
+    }
+
+    screengrab(){
+        this.initLevel(10);
+        this.ui.hide();
     }
 
     get difficulty(){
@@ -513,6 +521,7 @@ export class Game{
         this.loadingBar.visible = false;
         
         this.initLevel(this.levelIndex, false);
+        //this.screengrab();
 
         this.update();
     }
@@ -704,6 +713,8 @@ export class Game{
 		this.camera.position.set(0, 0, (data.size==3) ? 7 : 9);
 		this.controls.update();
         this.bits.box.position.set(-cellSize/2,cellSize/2,cellSize/2);
+        const scale = (data.size==3) ? 0.1 : 0.133;
+        this.bits.box.scale.set( scale, scale, scale );
 		
 		this.initLevelPhysics();
 		
@@ -778,12 +789,20 @@ export class Game{
 	}
 	
 	endHint(){
-		for(let pipe of this.level.children){
-			if (pipe.userData.cellId==16) continue;
-			if (pipe.userData.savePosition==undefined) continue;
-			pipe.position.copy(pipe.userData.savePosition);
-			delete pipe.userData.savePosition;
-		}
+        if (!this.debug){
+            for(let pipe of this.level.children){
+                if (pipe.userData.cellId==16) continue;
+                if (pipe.userData.savePosition==undefined) continue;
+                pipe.position.copy(pipe.userData.savePosition);
+                delete pipe.userData.savePosition;
+            }
+        }else{
+            for(let pipe of this.level.children){
+                if (pipe.userData.cellId==16) continue;
+                this.physics.setMeshPosition( pipe );
+            }
+        }
+
 		this.sfx.play("swish");
 		this.interactive = true;
         this.enableButtons(true);

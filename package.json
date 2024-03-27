@@ -15,9 +15,11 @@
   "author": "Nik Lever",
   "license": "ISC",
   "dependencies": {
+    "@dimforge/rapier3d": "^0.12.0",
     "three": "^0.160.0"
   },
   "devDependencies": {
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "vite-plugin-wasm": "^3.3.0"
   }
 }

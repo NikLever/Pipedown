@@ -1,7 +1,8 @@
 import { Clock, Vector3, Quaternion, Matrix4 } from 'three';
+//import RAPIER from '@dimforge/rapier3d';
 
 export class Physics{
-    static RAPIER_PATH = 'https://cdn.skypack.dev/@dimforge/rapier3d-compat@0.11.2';
+    static RAPIER_PATH = 'https://cdn.skypack.dev/@dimforge/rapier3d-compat@0.12.0';
 
     constructor(){
         this.isReady = false;
@@ -47,6 +48,7 @@ export class Physics{
         });*/
 
         this.isReady = true;
+
     }
 
     reset(){
