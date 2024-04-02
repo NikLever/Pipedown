@@ -81,6 +81,8 @@ export class Game{
             }
             if (hints != null) this._hints = hints;
 
+            //this.levelsCompleted = this.levelIndex = 0;
+
             const difficulty = Number(localStorage.getItem("difficulty"));
             const skybox = localStorage.getItem("skybox");
             const music = Number(localStorage.getItem("music"));
@@ -262,6 +264,8 @@ export class Game{
         controls.target.y = 0.0;
         controls.update();
         this.controls = controls;
+
+        this.camStart = { position: this.camera.position.clone(), quaternion: this.camera.quaternion.clone() }
             
         window.addEventListener( 'resize', this.resize.bind(this), false);
 
@@ -452,8 +456,8 @@ export class Game{
         pipe.getWorldPosition(this.tmpVec3);
 		const pos = this.tmpVec3;
 		const x = Math.floor(pos.x/this.cellSize);
-		const y = this.levelSize + Math.floor(pos.y/this.cellSize) - 1;
-		const z = this.levelSize + Math.floor(pos.z/this.cellSize) - 1;
+		const y = Math.floor(pos.y/this.cellSize + this.levelSize * this.cellSize ) - this.levelSize + 1;
+		const z = Math.floor(pos.z/this.cellSize + this.levelSize * this.cellSize ) - this.levelSize + 1;
 		return { x, y, z };
 	}
 	
@@ -483,6 +487,7 @@ export class Game{
 
     legalMove(pipe){
 		const cell = this.getCell(pipe);
+        console.log( `legalMove: ${cell.x}, ${cell.y}, ${cell.z}`);
 		const lim = this.levelSize - 1;
 		const up = (cell.y<lim) && (this.isCellEmpty(cell.x, cell.y+1, cell.z));
 		const down = (cell.y>0) && (this.isCellEmpty(cell.x, cell.y-1, cell.z));
@@ -1049,14 +1054,9 @@ export class Game{
                 this.wrench.scale.set( -scale, scale, scale);
                 this.wrench.userData.action = action;
 
-                const pos = new Vector3(-0.9, 0.3, 0).unproject(this.camera);
-                this.wrench.position.copy(pos);
-                this.wrench.rotateY(Math.PI/5);
-                this.resize();
-                this.wrench.position.x = this.wrench.userData.startX;
-
                 this.scene.add(this.camera);
-                if (this.camera) this.camera.attach(this.wrench);
+                
+                this.resize();
             },
             // called while loading is progressing
             (xhr) => { this.loadingBar.update("wrench", xhr.loaded, xhr.total ) },
@@ -1226,17 +1226,37 @@ export class Game{
         this.camera.updateProjectionMatrix();
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
-        this.scene.attach(this.wrench);
+        this.scene.add(this.wrench);
+
+        const camPosQuat = { position: this.camera.position.clone(), quaternion: this.camera.quaternion.clone() }
+
+        this.camera.position.copy( this.camStart.position );
+        this.camera.quaternion.copy( this.camStart.quaternion );
+        this.camera.updateMatrix();
+        this.camera.updateMatrixWorld();
 
         const offset = (1.0 - this.camera.aspect) * -0.4;
 
-        const pos = new Vector3(-1 + offset, 0.3, 0).unproject(this.camera);
-        this.wrench.position.copy(pos);
-        this.wrench.userData.targetX = pos.x;
+        if (!this.wrench.userData.startX){
+            const pos = new Vector3(-1 + offset, 0.3, 0).unproject(this.camera);
+            this.wrench.position.copy(pos);
+            this.wrench.userData.targetX = pos.x;
 
-        const pos2 = new Vector3( -1.5, 0.3, 0).unproject(this.camera);
-        this.wrench.userData.startX = pos2.x;
+            const pos2 = new Vector3( -1.5, 0.3, 0).unproject(this.camera);
+            this.wrench.userData.startX = pos2.x;
+        }
+
+        this.wrench.rotation.set(0,0,0);
+        
+        const pos3 = new Vector3(-0.9, 0.3, 0).unproject(this.camera);
+        this.wrench.position.copy(pos3);
+        
+        this.wrench.rotateY(Math.PI/5);
+        this.wrench.position.x = this.wrench.userData.startX;
 
         this.camera.attach(this.wrench);
+
+        this.camera.position.copy( camPosQuat.position );
+        this.camera.quaternion.copy( camPosQuat.quaternion );
     }
 }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans|Kavivanar" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+  <title>Pipedown</title>
+  <style>
+	
+  </style>
+
+<!--CrazyGames
+	<script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>-->
+<!--Cool Math Games
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.coolmathgames.com/sites/default/files/cmg-ads.js"></script>-->
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../../../node_modules/three/build/three.module.js",
+        "three/addons/": "../../../node_modules/three/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" crossorigin src="./assets/index-DoFcH-f7.js"></script>
+</head>
+<body>
+	<div id="logo"><img src="logo.png" /></div>
+	<div id="message">
+		<button id="message_close"><img src="close.svg" width="48" height="48" /></button>
+		<div id="gif"><img src="genius.gif" /></div>
+		<p id="message_text"></p>
+		<button id="message_ok" class="glossy-button glossy-button--gold">OK</button>
+	</div>
+	<div id="level"><p>LEVEL</p><p id="level_text" class="ui-text">0</p></div>
+	<div id="score"><p>SCORE</p><p id="score_text" class="ui-text">0</p></div>
+	<div id="moves"><p id="moves_text" class="ui-text">0(0)</p><p>MOVES</p></div>
+	<div id="tutorial_txt"></div>
+	<button id="hint" class="glossy-button glossy-button--blue txtbtn">HINT</button>
+	<button id="drop" class="glossy-button glossy-button--blue txtbtn">DROP</button>
+	<button id="reset" class="glossy-button glossy-button--blue txtbtn">RESET</button>
+	<button id="options" class="glossy-button glossy-button--blue txtbtn">OPTIONS</button>
+	<!--<button id="help" class="txtbtn">HELP</button>-->
+	<button id="zoom-in" class="svgbtn"><div class="circle"></div></button>
+	<button id="zoom-out" class="svgbtn"><div class="circle"></div></button>
+	<div id="hand"><img src="hand.png" width="100%"/></div>
+	<div id="arrow" draggable="false"><img draggable="false" src="arrow.png" width="100%"/></div>
+	<div id="easy">Easy&nbsp;&nbsp;<label class="switch"><input type="checkbox"><span class="slider round"></span></label></div>
+	<div id="option-panel" class="panel">
+		<div class="header"><button class="tab">Settings</button><button class="tab">Levels</button></div>
+		<div id="settings" class="content">
+			<table>
+				<tr><td>Difficulty</td><td style="line-height: 30px;">Easy&nbsp;&nbsp;<label class="switch">
+					<input id="diffId" type="checkbox" checked>
+					<span class="slider round"></span>
+				  </label>&nbsp;&nbsp;Hard</td></tr>
+				<tr><td>Skybox</td><td id="skybox-sky" onclick="window.loadSkybox('sky')"><img src="sky-thumb.jpg" /> Blue sky</td></tr>
+				<tr><td></td><td  id="skybox-factory" onclick="window.loadSkybox('factory')"><img src="factory-thumb.jpg" /> Factory </td></tr>
+				<tr><td></td><td  id="skybox-forest" onclick="window.loadSkybox('forest')"><img src="forest-thumb.jpg" /> Forest</td></tr>
+				<tr><td></td><td  id="skybox-space" onclick="window.loadSkybox('space')"><img src="space-thumb.jpg" /> Space</td></tr>
+				<tr><td>Music</td><td style="line-height: 30px;">Off&nbsp;&nbsp; <label class="switch">
+					<input id="musicId" type="checkbox">
+					<span class="slider round"></span>
+				  </label>&nbsp;&nbsp;On</td></tr>
+			</table>
+		</div>
+		<div id="levels"  class="content" style="display: none;">
+			<div class="level">1</div>
+			<div class="level">1</div>
+			<div class="level"><img src="lock.svg" /></div>
+			<div class="level">1</div>
+			<div class="level">1</div>
+			<div class="level">1</div>
+			<div class="level">1</div>
+			<div class="level">1</div>
+		</div>
+		<div class="footer"><button id="panel-ok" class="simplebtn">CLOSE</button></div>
+	</div>
+
+</body>
+</html>
