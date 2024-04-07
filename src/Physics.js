@@ -190,9 +190,11 @@ export class Physics{
 		    this.world.step();
             time += this.fixedstep;
         }while( (dt - time) > this.fixedstep );
-
-        this.world.timestep = dt - time;
-        this.world.step();
+        
+        if ((dt - time) > 0){
+            this.world.timestep = dt - time;
+            this.world.step();
+        }
 
 		this.meshes.forEach( mesh => {
 
