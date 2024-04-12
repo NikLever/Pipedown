@@ -6,6 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="./icon.svg" />
   <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans|Kavivanar" rel="stylesheet">
   <link href="styles.css" rel="stylesheet">
+  <link href="mobile.css" rel="stylesheet">
   <title>Pipedown</title>
   <style>
 	
@@ -18,16 +19,21 @@
       }
     }
   </script>
-<!--CrazyGames-->
-	<script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>
-<!--Cool Math Games
+<!--CrazyGames
+	<script src="https://sdk.crazygames.com/crazygames-sdk-v2.js"></script>-->
+<!--Cool Math Games-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script type="text/javascript" src="https://www.coolmathgames.com/sites/default/files/cmg-ads.js"></script>-->
-
+<script type="text/javascript" src="https://www.coolmathgames.com/sites/default/files/cmg-ads.js"></script>
+<!--<script>
+var PleaseRotateOptions = {
+	forcePortrait: true // if you would prefer to force portrait mode
+};
+</script>
+<script src="pleaserotate.min.js"></script>-->
 </head>
 <body>
 	<div id="logo"><img src="logo.png" /></div>
-	<div id="message">
+	<div id="message" style="z-index: 999;">
 		<button id="message_close"><img src="close.svg" width="48" height="48" /></button>
 		<div id="gif"><img src="genius.gif" /></div>
 		<p id="message_text"></p>
@@ -47,7 +53,7 @@
 	<div id="hand"><img src="hand.png" width="100%"/></div>
 	<div id="arrow" draggable="false"><img draggable="false" src="arrow.png" width="100%"/></div>
 	<div id="easy">Easy&nbsp;&nbsp;<label class="switch"><input type="checkbox"><span class="slider round"></span></label></div>
-	<div id="option-panel" class="panel">
+	<div id="option-panel" class="panel" style="z-index: 1000;">
 		<div class="header"><button class="tab">Settings</button><button class="tab">Levels</button></div>
 		<div id="settings" class="content">
 			<table>
@@ -79,8 +85,7 @@
 	</div>
 	<script type="module">
 		import { Game } from "./Game.js"
-		const game = new Game("cg");
+		const game = new Game("cmg");
 	</script>
-
 </body>
 </html>

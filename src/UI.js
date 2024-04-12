@@ -236,7 +236,14 @@ export class UI{
 		panel.style.display = 'flex';
 	}
 
+	get mobile(){
+        if (window.innerHeight<480 || window.innerWidth<480) return true;
+        return false;
+    }
+
     showMessage(msg, fontSize=20, onOK=null, binder=null, close=false, ok_txt='OK'){
+		if (this.mobile) fontSize *= 0.8;
+
 		const txt = document.getElementById('message_text');
 		txt.innerHTML = msg;
 		txt.style.fontSize = fontSize + 'px';

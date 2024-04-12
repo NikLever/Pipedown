@@ -71,8 +71,21 @@ export class Tutorial{
         this.active = false;
     }
 
+    get mobile(){
+        if (window.innerHeight<480 || window.innerWidth<480) return true;
+        return false;
+    }
+
     setArrow( bottom, display){
         const arrow = document.getElementById("arrow");
+        if (this.mobile){
+            let tmp = Number(bottom.substring(0, bottom.length-2));
+            tmp -= 10;
+            tmp /= 60;
+            tmp *= 45;
+            tmp += 10;
+            bottom = `${tmp}px`;
+        } 
         arrow.style.bottom = bottom;
         arrow.style.display = display;
     }

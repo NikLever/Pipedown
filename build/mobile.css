@@ -1,0 +1,60 @@
+@media (max-width: 480px) or (max-height: 480px) {
+    /* Glossy button */
+.glossy-button {
+    font-size: 12px;
+    font-family: sans-serif;
+    font-weight: bold;
+    line-height: 9px;
+    color: white;
+    padding: 13px 13px;
+    text-shadow:
+      0 0 10px hsla(0, 0%, 100%, 1), /* bloom */
+      0 1px 2px hsla(0, 0%, 0%, 0.7); /* drop shadow */
+    border: none;
+    border-radius: 30px;
+    margin: 6px;
+    box-shadow:
+      inset 0 -3px 12px hsla(0, 0%, 0%, 0.4), /* top light */
+      inset 0 3px 12px hsla(0, 0%, 100%, 0.4), /* bottom shadow */
+      /* multiple light sources yall */
+      -5px 5px 3px hsla(0, 0%, 0%, 0.15), /* drop shadow 1 */
+      3px 12px 6px hsla(0, 0%, 0%, 0.2); /* drop shadow 2 */
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    }
+    
+    /* highlight */
+    .glossy-button:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    top: 3px;
+    height: 17px;
+    border-radius: 9px;
+    background: linear-gradient(
+      hsla(0, 0%, 100%, 0.8), hsla(0, 0%, 100%, 0) );
+    }
+    
+    .glossy-button:hover {
+    transform: scale(1.05);
+    box-shadow:
+      inset 0 -3px 12px hsla(0, 0%, 0%, 0.4), /* top light */
+      inset 0 3px 12px hsla(0, 0%, 100%, 0.4), /* bottom shadow */
+      /* multiple light sources yall */
+      -7px 7px 3px hsla(0, 0%, 0%, 0.15), /* drop shadow 1 */
+      7px 14px 7px hsla(0, 0%, 0%, 0.2); /* drop shadow 2 */
+    } 
+
+    .txtbtn{ width: 90px; height: 35px; }
+    .svgbtn{ width: 40px; height: 40px; }
+
+    .circle{ width: 35px; height: 35px; }
+
+    #message{ font-size: 20px; border-radius: 13px; max-height: 250px; }
+
+    #tutorial_txt{ font-size: 18px; width:80%; padding: 10px; border-radius: 12px; }
+  }
+
+  

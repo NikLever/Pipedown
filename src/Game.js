@@ -81,7 +81,7 @@ export class Game{
             }
             if (hints != null) this._hints = hints;
 
-            //this.levelsCompleted = this.levelIndex = 0;
+            this.levelsCompleted = this.levelIndex = 0;
 
             const difficulty = Number(localStorage.getItem("difficulty"));
             const skybox = localStorage.getItem("skybox");
@@ -401,8 +401,12 @@ export class Game{
         delete this.checkBall;
         this.sfx.stop("rolling");
         this.level.children.forEach( pipe => {
-            pipe.userData.ballPassed = false;
-            this.setPipeMaterial(pipe);
+            try{
+                pipe.userData.ballPassed = false;
+                this.setPipeMaterial(pipe);
+            }catch(e){
+                console.warn(e.message);
+            }
         });
         this.physics.setMeshPosition(this.bits.ball, this.startPosition);
         if (this.cg) this.cg.requestAd();
@@ -1258,5 +1262,52 @@ export class Game{
 
         this.camera.position.copy( camPosQuat.position );
         this.camera.quaternion.copy( camPosQuat.quaternion );
+
+        this.updateCSS();
+    }
+
+    updateCSS( ){
+        const ui = ['level', 'score', 'moves'];
+
+        const landscape = window.innerWidth > window.innerHeight;
+
+        const fontSize = `${Math.min(20, (landscape) ? window.innerHeight/20 : window.innerWidth/20)}px`;
+        const fontSize2 = `${Math.min(55, (landscape) ? window.innerHeight/10 : window.innerWidth/10)}px`;
+
+        ui.forEach( name => {
+            const elm = document.getElementById(name);
+            if (elm){
+                elm.style.fontSize = fontSize;
+                const child = elm.getElementsByClassName('ui-text')[0];
+                child.style.fontSize = fontSize2;
+                child.style.lineHeight = fontSize2;
+            }
+        });
+
+        if (window.innerHeight<480 || window.innerWidth<480){
+            let btns = ['hint', 'drop', 'reset', 'options', 'zoom-in', 'zoom-out'];
+            let bottom = 10;
+
+            btns.forEach( name => {
+                const btn = document.getElementById(name);
+                if (btn){
+                    btn.style.bottom = `${bottom}px`;
+                    if (name != 'zoom-in') bottom += 45;
+                    if (name.startsWith('zoom')){
+                        btn.style.right = (name=='zoom-out') ? '30px' : '70px';
+                    }else{
+                        btn.style.right = '20px';
+                    }
+                }
+            })
+        }
+
+        if (window.innerHeight<480){
+            const elms = document.getElementsByClassName('content');
+            Array.from(elms).forEach( content => {
+                content.style.height = `${window.innerHeight * 0.8 - 100}px`;
+                content.style.overflow = 'scroll';
+            });
+        }
     }
 }
