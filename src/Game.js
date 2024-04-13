@@ -81,7 +81,7 @@ export class Game{
             }
             if (hints != null) this._hints = hints;
 
-            this.levelsCompleted = this.levelIndex = 0;
+            //this.levelsCompleted = this.levelIndex = 0;
 
             const difficulty = Number(localStorage.getItem("difficulty"));
             const skybox = localStorage.getItem("skybox");
