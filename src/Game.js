@@ -1239,16 +1239,18 @@ export class Game{
         this.camera.updateMatrix();
         this.camera.updateMatrixWorld();
 
-        const offset = (1.0 - this.camera.aspect) * -0.4;
+        //const offset = Math.max((1.0 - this.camera.aspect) * -0.4, 0);
+        const offset = (this.camera.aspect<1) ? (this.camera.aspect) * -1.00 : (1.0 - this.camera.aspect) * -0.3;
+        console.log(`Offset: ${offset}`);
 
-        if (!this.wrench.userData.startX){
+        //if (!this.wrench.userData.startX){
             const pos = new Vector3(-1 + offset, 0.3, 0).unproject(this.camera);
             this.wrench.position.copy(pos);
             this.wrench.userData.targetX = pos.x;
 
-            const pos2 = new Vector3( -1.5, 0.3, 0).unproject(this.camera);
+            const pos2 = new Vector3( -2.5, 0.3, 0).unproject(this.camera);
             this.wrench.userData.startX = pos2.x;
-        }
+        //}
 
         this.wrench.rotation.set(0,0,0);
         
@@ -1302,12 +1304,15 @@ export class Game{
             })
         }
 
-        if (window.innerHeight<480){
-            const elms = document.getElementsByClassName('content');
-            Array.from(elms).forEach( content => {
+        const elms = document.getElementsByClassName('content');
+        Array.from(elms).forEach( content => {
+            if (window.innerHeight<480){
                 content.style.height = `${window.innerHeight * 0.8 - 100}px`;
                 content.style.overflow = 'scroll';
-            });
-        }
+            }else{
+                content.style.height = "inherit";
+                content.style.overflow = 'hidden';
+            }
+        });
     }
 }
